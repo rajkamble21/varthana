@@ -20,7 +20,17 @@ const createUser = async (requestBody) => {
     }
 }
 
+const getUsers = async () => {
+    try {
+        let users = await User.findAll();
+        return users;
+    } catch (error) {
+        console.log(`error during getUsers`, error);
+    }
+}
+
 module.exports = {
     findUserByEmail,
-    createUser
+    createUser,
+    getUsers
 }

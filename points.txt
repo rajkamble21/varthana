@@ -23,3 +23,16 @@ module.exports = {
     await queryInterface.removeConstraint('Users', 'unique_email');
   }
 };
+
+// database model
+A database model is a type of data model that determines the logical structure of a database. 
+It fundamentally determines in which manner data can be stored, organized and manipulated.
+
+// salt value - the higher value the more computationally intensive task
+// const hashedPassword = await bcrypt.hash(password, 10);
+// When we add a salt to the password, the resulting hash is unique for each user, even if they use the same password.
+
+const hashedPassword = await bcrypt.hash(password, 10);
+
+
+
