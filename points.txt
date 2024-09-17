@@ -1,0 +1,25 @@
+//to create model
+npx sequelize model:generate --name User --attributes name:string,email:string,password:string,phone:string
+
+//for migration
+npx sequelize db:migrate
+
+//always create a migration file if you are making changes to table
+//we also need to define thoese changes into migration file as well as models
+npx sequelize migration:create --name add-unique-constraint-to-email
+
+//these are the changes
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.addConstraint('Users', {
+      fields: ['email'],
+      type: 'unique',
+      name: 'unique_email'
+    });
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.removeConstraint('Users', 'unique_email');
+  }
+};
