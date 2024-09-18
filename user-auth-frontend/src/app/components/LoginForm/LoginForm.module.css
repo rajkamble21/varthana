@@ -15,11 +15,21 @@
   margin-bottom: 10px;
 }
 
-.input {
+.inputGroup {
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+.errorMessage {
+  color: red;
 }
 
 .submitButton {

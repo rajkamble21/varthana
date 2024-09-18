@@ -9,23 +9,38 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
+  const [fieldErrors, setFieldErrors] = useState({
+    email: "",
+    password: "",
+  });
   const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
-
   const router = useRouter();
 
   const validateFields = () => {
-    if (!formData.email || !formData.password) {
-      setError("All fields are required");
-      return false;
+    let errors = {};
+    let isValid = true;
+
+    if (!formData.email) {
+      errors.email = "Email is required!";
+      isValid = false;
+    } else if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      errors.email = "Invalid email format";
+      isValid = false;
     }
-    return true;
+
+    if (!formData.password) {
+      errors.password = "password is required!";
+      isValid = false;
+    }
+
+    setFieldErrors(errors);
+
+    return isValid;
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setMessage("");
-    setError("");
     console.log("formData", formData);
     if (validateFields()) {
       try {
@@ -54,27 +69,36 @@ const LoginForm = () => {
   return (
     <form className={styles.formContainer} onSubmit={handleLogin} noValidate>
       <h2 className={styles.heading}>Login Form</h2>
-      <input
-        className={styles.input}
-        type="email"
-        name="email"
-        placeholder="Enter your email"
-        value={formData.email}
-        onChange={handleChange}
-      ></input>
-      <input
-        className={styles.input}
-        type="password"
-        name="password"
-        placeholder="Enter you password"
-        value={formData.password}
-        onChange={handleChange}
-      ></input>
+      <div className={styles.inputGroup}>
+        <input
+          className={styles.input}
+          type="email"
+          name="email"
+          placeholder="Enter your email"
+          value={formData.email}
+          onChange={handleChange}
+        ></input>
+        {fieldErrors.email && (
+          <p className={styles.errorMessage}>{fieldErrors.email}</p>
+        )}
+      </div>
+      <div className={styles.inputGroup}>
+        <input
+          className={styles.input}
+          type="password"
+          name="password"
+          placeholder="Enter you password"
+          value={formData.password}
+          onChange={handleChange}
+        ></input>
+        {fieldErrors.password && (
+          <p className={styles.errorMessage}>{fieldErrors.password}</p>
+        )}
+      </div>
       <button className={styles.submitButton} type="submit">
         Submit
       </button>
       {message && <div className={styles.message}>{message}</div>}
-      {error && <div className={styles.error}>{error}</div>}
     </form>
   );
 };
