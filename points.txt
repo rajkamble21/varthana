@@ -24,6 +24,16 @@ module.exports = {
   }
 };
 
+
+//if we want to add multiple columns
+
+await queryInterface.addColumn('Users', 'address', {
+      type: Sequelize.STRING
+    })
+    await queryInterface.addColumn('USers', 'permanent_address', {
+      type: Sequelize.STRING
+    })
+
 // database model
 A database model is a type of data model that determines the logical structure of a database. 
 It fundamentally determines in which manner data can be stored, organized and manipulated.
