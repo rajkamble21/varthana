@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import styles from "./RegisterForm.module.css"
+import styles from "./RegisterForm.module.css";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -81,6 +81,7 @@ const RegisterForm = () => {
   };
   return (
     <form onSubmit={handleRegister} className={styles.formContainer} noValidate>
+      <h2 className={styles.heading}>Registration Form</h2>
       <input
         className={styles.input}
         type="text"

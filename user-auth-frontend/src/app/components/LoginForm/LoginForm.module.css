@@ -9,6 +9,12 @@
   border-radius: 4px;
 }
 
+.heading {
+  color: #4caf50;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
 .input {
   margin-bottom: 10px;
   padding: 10px;

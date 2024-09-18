@@ -53,6 +53,7 @@ const LoginForm = () => {
   };
   return (
     <form className={styles.formContainer} onSubmit={handleLogin} noValidate>
+      <h2 className={styles.heading}>Login Form</h2>
       <input
         className={styles.input}
         type="email"
