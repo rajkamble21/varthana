@@ -10,52 +10,63 @@ const RegisterForm = () => {
     password: "",
     phone: "",
   });
+  const [fieldErrors, setFieldErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+  });
   const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
 
   const validateFields = () => {
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.password ||
-      !formData.phone
-    ) {
-      setError("All fields are required");
-      return false;
+    let errors = {};
+    let isValid = true;
+    if (!formData.name) {
+      errors.name = "Name is required!";
+      isValid = false;
     }
 
-    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      setError("Invalid email format");
-      return false;
+    if (!formData.email) {
+      errors.email = "Email is required!";
+      isValid = false;
+    } else if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      errors.email = "Invalid email format";
+      isValid = false;
     }
 
-    if (formData.password.length < 6) {
-      setError("password must be 6 characters long");
-      return false;
+    if (!formData.password) {
+      errors.password = "password is required!";
+      isValid = false;
+    } else if (formData.password.length < 6) {
+      errors.password = "password must be 6 characters long";
+      isValid = false;
     } else if (!formData.password.match(/\d/)) {
-      setError("password must contain at least one number");
-      return false;
+      errors.password = "password must contain at least one number";
+      isValid = false;
     } else if (!formData.password.match(/[a-zA-Z]/)) {
-      setError("password must contain at least one alphabate");
-      return false;
+      errors.password = "password must contain at leats one alphabate";
+      isValid = false;
     } else if (!formData.password.match(/[!@#$%^&*()_+{}\[\]:;<>,.?]/)) {
-      setError("password must contain at least one special character");
-      return false;
+      errors.password = "password must contain at least on especial character";
     }
 
-    if (!formData.phone.match(/^[0-9]{10}$/)) {
-      setError("Phone number must have 10 digits");
-      return false;
+    if (!formData.phone) {
+      errors.phone = "phone number is required!";
+      isValid = false;
+    } else if (!formData.phone.match(/^[0-9]{10}$/)) {
+      errors.phone = "Phone number must have 10 digits";
+      isValid = false;
     }
 
-    return true;
+    setFieldErrors(errors);
+
+    return isValid;
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
     setMessage("");
-    setError("");
     if (validateFields()) {
       try {
         const res = await axios.post(
@@ -82,43 +93,62 @@ const RegisterForm = () => {
   return (
     <form onSubmit={handleRegister} className={styles.formContainer} noValidate>
       <h2 className={styles.heading}>Registration Form</h2>
-      <input
-        className={styles.input}
-        type="text"
-        name="name"
-        placeholder="Enter your name"
-        value={formData.name}
-        onChange={handleChange}
-      ></input>
-      <input
-        className={styles.input}
-        type="email"
-        name="email"
-        placeholder="Enter your email"
-        value={formData.email}
-        onChange={handleChange}
-      ></input>
-      <input
-        className={styles.input}
-        type="password"
-        name="password"
-        placeholder="Enter you password"
-        value={formData.password}
-        onChange={handleChange}
-      ></input>
-      <input
-        className={styles.input}
-        type="text"
-        name="phone"
-        placeholder="Enter you phone"
-        value={formData.phone}
-        onChange={handleChange}
-      ></input>
+      <div className={styles.inputGroup}>
+        <input
+          className={styles.input}
+          type="text"
+          name="name"
+          placeholder="Enter your name"
+          value={formData.name}
+          onChange={handleChange}
+        ></input>
+        {fieldErrors.name && (
+          <p className={styles.errorMessage}>{fieldErrors.name}</p>
+        )}
+      </div>
+      <div className={styles.inputGroup}>
+        <input
+          className={styles.input}
+          type="email"
+          name="email"
+          placeholder="Enter your email"
+          value={formData.email}
+          onChange={handleChange}
+        ></input>
+        {fieldErrors.email && (
+          <p className={styles.errorMessage}>{fieldErrors.email}</p>
+        )}
+      </div>
+      <div className={styles.inputGroup}>
+        <input
+          className={styles.input}
+          type="password"
+          name="password"
+          placeholder="Enter you password"
+          value={formData.password}
+          onChange={handleChange}
+        ></input>
+        {fieldErrors.password && (
+          <p className={styles.errorMessage}>{fieldErrors.password}</p>
+        )}
+      </div>
+      <div className={styles.inputGroup}>
+        <input
+          className={styles.input}
+          type="text"
+          name="phone"
+          placeholder="Enter you phone"
+          value={formData.phone}
+          onChange={handleChange}
+        ></input>
+        {fieldErrors.phone && (
+          <p className={styles.errorMessage}>{fieldErrors.phone}</p>
+        )}
+      </div>
       <button type="submit" className={styles.submitButton}>
         Submit
       </button>
       {message && <div className={styles.message}>{message}</div>}
-      {error && <div className={styles.error}>{error}</div>}
     </form>
   );
 };

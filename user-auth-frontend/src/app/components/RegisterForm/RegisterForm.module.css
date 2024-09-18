@@ -1,7 +1,7 @@
 .formContainer {
   display: flex;
   flex-direction: column;
-  max-width: 300px;
+  width: 400px;
   margin: 4rem auto;
   padding: 20px;
   background-color: white;
@@ -9,18 +9,30 @@
   border-radius: 4px;
 }
 
-.heading{
+.heading {
   color: #4caf50;
   text-align: center;
   margin-bottom: 10px;
 }
 
-.input {
+.inputGroup {
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
+.errorMessage{
+  color: red;
+}
+
+
 
 .submitButton {
   color: white;
@@ -40,11 +52,4 @@
   text-align: center;
 }
 
-.error {
-  padding: 10px;
-  color: #ffffff;
-  background-color: #e53935;
-  margin: 10px 0;
-  border-radius: 4px;
-  text-align: center;
-}
+
