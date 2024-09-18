@@ -1,13 +1,20 @@
 require('dotenv').config();
 const express = require("express");
+const cors = require("cors")
 const authRoute = require("./routes/authRoute")
 const userRoute = require("./routes/userRoute")
 
+
+
 const app = express();
+
+app.use(cors({
+    origin: 'http://localhost:3000',
+}))
 
 app.use(express.json());
 
-const PORT = process.env.EXPRESS_PORT || 3000
+const PORT = process.env.EXPRESS_PORT || 4000
 
 app.get('/', (req, res) => {
     res.send('<h1>Server is runnning</h1>')

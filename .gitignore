@@ -1,2 +1,5 @@
 user-auth-backend/node_modules
 user-auth-backend/migrations
+
+user-auth-frontend/node_modules
+
