@@ -1,4 +1,6 @@
 const { where } = require('sequelize');
+const { Op } = require('sequelize');
+
 const { User } = require('../models');
 
 const findUserById = async (id) => {
@@ -7,6 +9,30 @@ const findUserById = async (id) => {
         return user;
     } catch (error) {
         console.log("error during findUserById", error);
+    }
+}
+
+const getUsers = async () => {
+    try {
+        let users = await User.findAll();
+        return users;
+    } catch (error) {
+        console.log(`error during getUsers`, error);
+    }
+}
+
+const getUsersExceptOne = async (id) => {
+    try {
+        const users = await User.findAll({
+            where: {
+                id: {
+                    [Op.ne]: id
+                }
+            }
+        });
+        return users;
+    } catch (error) {
+        console.log("error during getAllUsersExceptOne", error);
     }
 }
 
@@ -33,5 +59,7 @@ const deleteUser = async (id) => {
 module.exports = {
     updateUser,
     deleteUser,
-    findUserById
+    findUserById,
+    getUsersExceptOne,
+    getUsers
 }

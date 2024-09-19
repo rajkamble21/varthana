@@ -8,7 +8,7 @@ const auth = (req, res, next) => {
     }
     try {
         token = token.split(' ')[1];
-        req.id = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
         next();
     } catch (error) {
         console.log(error)

@@ -1,10 +1,12 @@
 const router = require("express").Router();
 const { getAllUsers } = require('../controllers/authController');
-const { deleteUserById, updateUserById } = require('../controllers/userController');
+const { validateBody, validateParams } = require('../middlewares/validate');
+const { deleteUserById, updateUserById, getUsersExceptLoggedInUser } = require('../controllers/userController');
+const { updateUserSchema } = require('../validations/userValidation');
 const auth = require('../middlewares/auth')
 
-router.get('/', auth, getAllUsers);
-router.patch('/:id', auth, updateUserById);
+router.get('/', auth, getUsersExceptLoggedInUser);
+router.patch('/:id', validateBody(updateUserSchema), auth, updateUserById);
 router.delete('/:id', auth, deleteUserById);
 
 module.exports = router;
