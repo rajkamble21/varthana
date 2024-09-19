@@ -17,6 +17,16 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleSameAddress = () => {
+    if (!isSameAddress) {
+      setFormData({ ...formData, permanent_address: formData.address });
+      setIsSameAddress(true);
+    } else {
+      setFormData({ ...formData, permanent_address: user.permanent_address });
+      setIsSameAddress(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
@@ -84,7 +94,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
               <input
                 type="checkbox"
                 checked={isSameAddress}
-                onChange={() => setIsSameAddress(!isSameAddress)}
+                onChange={handleSameAddress}
               />
               <span className="ml-2 text-sm font-medium text-gray-700">
                 Same as Address
@@ -99,9 +109,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
               type="text"
               name="permanent_address"
-              value={
-                isSameAddress ? formData.address : formData.permanent_address
-              }
+              value={formData.permanent_address}
               onChange={handleChange}
               placeholder="Enter permanent address"
               disabled={isSameAddress}
