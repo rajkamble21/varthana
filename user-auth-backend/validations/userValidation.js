@@ -1,5 +1,5 @@
 const joi = require('joi');
-const { password, phone } = require('./customValidation');
+const { phone } = require('./customValidation');
 
 const updateUserSchema = joi.object({
     name: joi.string().required(),
@@ -9,6 +9,12 @@ const updateUserSchema = joi.object({
     permanent_address: joi.string().min(15).max(100).required(),
 })
 
+const userIdSchema = joi.object({
+    id: joi.number().integer().required(),
+})
+
+
 module.exports = {
     updateUserSchema,
+    userIdSchema
 }

@@ -120,7 +120,7 @@ const RegisterForm = () => {
 
       <div className="mb-4">
         <input
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          className="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
           type="email"
           name="email"
           placeholder="Enter your email"
@@ -134,7 +134,7 @@ const RegisterForm = () => {
 
       <div className="mb-4">
         <input
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          className="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
           type="password"
           name="password"
           placeholder="Enter your password"
@@ -148,7 +148,7 @@ const RegisterForm = () => {
 
       <div className="mb-4">
         <input
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          className="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
           type="text"
           name="phone"
           placeholder="Enter your phone number"

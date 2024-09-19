@@ -75,7 +75,7 @@ const LoginForm = () => {
       </h2>
       <div className="mb-4 flex flex-col gap-2">
         <input
-          className="px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+          className="px-4 py-3  rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
           type="email"
           name="email"
           placeholder="Enter your email"
@@ -88,7 +88,7 @@ const LoginForm = () => {
       </div>
       <div className="mb-4 flex flex-col gap-2">
         <input
-          className="px-4 py-3 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+          className="px-4 py-3  rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
           type="password"
           name="password"
           placeholder="Enter your password"

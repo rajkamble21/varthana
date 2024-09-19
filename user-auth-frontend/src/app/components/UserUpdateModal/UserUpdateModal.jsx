@@ -94,7 +94,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 Name
               </label>
               <input
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+                className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
                 type="text"
                 name="name"
                 value={formData.name}
@@ -111,7 +111,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 Email
               </label>
               <input
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm p-2 cursor-not-allowed"
                 type="email"
                 name="email"
                 value={formData.email}
@@ -125,7 +125,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 Phone
               </label>
               <input
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+                className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
                 type="tel"
                 name="phone"
                 value={formData.phone}
@@ -142,7 +142,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 Address
               </label>
               <input
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+                className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
                 type="text"
                 name="address"
                 value={formData.address}
@@ -170,7 +170,9 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 Permanent Address
               </label>
               <input
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+                className={`mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 ${
+                  isSameAddress ? `cursor-not-allowed` : ``
+                }`}
                 type="text"
                 name="permanent_address"
                 value={formData.permanent_address}
