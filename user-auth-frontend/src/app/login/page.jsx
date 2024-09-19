@@ -1,4 +1,6 @@
+"use client";
 import LoginForm from "../components/LoginForm/LoginForm";
+import { SnackbarProvider } from "notistack";
 
 export default function Login() {
   const pageStyle = {
@@ -6,8 +8,16 @@ export default function Login() {
   };
 
   return (
-    <div style={pageStyle}>
-      <LoginForm />
-    </div>
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "center",
+      }}
+    >
+      <div style={pageStyle}>
+        <LoginForm />
+      </div>
+    </SnackbarProvider>
   );
 }

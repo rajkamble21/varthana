@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./LoginForm.module.css";
+import { useSnackbar } from "notistack";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +14,8 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
-  const [message, setMessage] = useState(null);
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const validateFields = () => {
     let errors = {};
@@ -40,8 +41,6 @@ const LoginForm = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setMessage("");
-    console.log("formData", formData);
     if (validateFields()) {
       try {
         const res = await axios.post(
@@ -51,13 +50,13 @@ const LoginForm = () => {
 
         console.log(res);
         if (res.status === 200) {
-          setMessage(res.data.message);
           localStorage.setItem("token", res.data.token);
+          enqueueSnackbar("Login successful!", { variant: "success" });
           router.push("/");
         }
       } catch (error) {
         console.log("error in handleLogin", error);
-        setError(error.response.data.message);
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
       }
     }
   };
@@ -98,7 +97,6 @@ const LoginForm = () => {
       <button className={styles.submitButton} type="submit">
         Submit
       </button>
-      {message && <div className={styles.message}>{message}</div>}
     </form>
   );
 };

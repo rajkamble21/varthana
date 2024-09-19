@@ -46,7 +46,16 @@ const UserList = () => {
         {users.length > 0 &&
           users.map((user) => (
             <div key={user.id} className={styles.userItem}>
-              {user.name}
+              <p>{user.name}</p>
+              <div>
+                <button className={styles.deleteButton}>
+                  <i className="fa-solid fa-pen-to-square"></i>{" "}
+                  <span>Edit</span>
+                </button>
+                <button className={styles.editButton}>
+                  <i className="fa-solid fa-trash"></i> <span>Delete</span>
+                </button>
+              </div>
             </div>
           ))}
       </div>

@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styles from "./RegisterForm.module.css";
+import { useSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +18,8 @@ const RegisterForm = () => {
     password: "",
     phone: "",
   });
-  const [message, setMessage] = useState(null);
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const validateFields = () => {
     let errors = {};
@@ -43,6 +46,7 @@ const RegisterForm = () => {
     } else if (!formData.password.match(/\d/)) {
       errors.password = "password must contain at least one number";
       isValid = false;
+      router.push("/");
     } else if (!formData.password.match(/[a-zA-Z]/)) {
       errors.password = "password must contain at leats one alphabate";
       isValid = false;
@@ -66,7 +70,6 @@ const RegisterForm = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    setMessage("");
     if (validateFields()) {
       try {
         const res = await axios.post(
@@ -74,14 +77,15 @@ const RegisterForm = () => {
           formData
         );
 
-        console.log(res);
         if (res.status === 201) {
-          setMessage(res.data.message);
           setFormData({ name: "", email: "", password: "", phone: "" });
+          enqueueSnackbar("Registration successful!, Please Login", {
+            variant: "success",
+          });
         }
       } catch (error) {
         console.log("error in handleRegister", error);
-        setError(error.response.data.message);
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
       }
     }
   };
@@ -148,7 +152,6 @@ const RegisterForm = () => {
       <button type="submit" className={styles.submitButton}>
         Submit
       </button>
-      {message && <div className={styles.message}>{message}</div>}
     </form>
   );
 };
