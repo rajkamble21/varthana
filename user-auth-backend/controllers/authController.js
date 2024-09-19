@@ -6,7 +6,7 @@ const register = async (req, res) => {
     try {
         let user = await findUserByEmail(req.body.email);
         if (user) {
-            return res.status(400).json({ message: 'user already exists with that email' });
+            return res.status(400).json({ message: 'User already exists with that email' });
         }
 
         const newUser = await createUser(req.body);
@@ -22,12 +22,12 @@ const login = async (req, res) => {
         let user = await findUserByEmail(req.body.email);
 
         if (!user) {
-            return res.status(400).json({ message: 'invalid email' });
+            return res.status(400).json({ message: 'User with that email does not exists!' });
         }
 
         let isValid = user.validatePassword(req.body.password);
         if (!isValid) {
-            return res.status(400).json({ message: 'invalid password' });
+            return res.status(400).json({ message: 'Wrong password!' });
         }
 
         let token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' });
