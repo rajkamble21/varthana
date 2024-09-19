@@ -97,7 +97,7 @@ const RegisterForm = () => {
   return (
     <form
       onSubmit={handleRegister}
-      className="max-w-md mx-auto mt-16 bg-white p-6 shadow-lg rounded-lg"
+      className="max-w-md mx-auto mt-24 bg-white p-6 shadow-lg rounded-lg"
       noValidate
     >
       <h2 className="text-2xl font-bold text-green-600 text-center mb-4">

@@ -66,7 +66,7 @@ const LoginForm = () => {
   };
   return (
     <form
-      className="flex flex-col max-w-md mx-auto p-8 mt-16 bg-white border border-gray-300 rounded-lg shadow-lg"
+      className="flex flex-col max-w-md mx-auto p-8 mt-24 bg-white border border-gray-300 rounded-lg shadow-lg"
       onSubmit={handleLogin}
       noValidate
     >

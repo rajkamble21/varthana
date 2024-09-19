@@ -25,15 +25,13 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSameAddress = () => {
-    if (!isSameAddress) {
-      setFormData({ ...formData, permanent_address: formData.address });
-      setIsSameAddress(true);
-    } else {
-      setFormData({ ...formData, permanent_address: user.permanent_address });
-      setIsSameAddress(false);
-    }
-  };
+  // const handleSameAddress = () => {
+  //   if (!isSameAddress) {
+  //     setIsSameAddress(true);
+  //   } else {
+  //     setIsSameAddress(false);
+  //   }
+  // };
 
   const validateFields = () => {
     let errors = {};
@@ -75,9 +73,12 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
   };
 
   const handleUpdateUser = (id, formData) => {
-    console.log(validateFields());
+    const updatedFormData = isSameAddress
+      ? { ...formData, permanent_address: formData.address }
+      : formData;
+
     if (validateFields()) {
-      updateUser(id, formData);
+      updateUser(id, updatedFormData);
     }
   };
 
@@ -158,10 +159,10 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 <input
                   type="checkbox"
                   checked={isSameAddress}
-                  onChange={handleSameAddress}
+                  onChange={() => setIsSameAddress(!isSameAddress)}
                 />
                 <span className="ml-2 text-sm font-medium text-gray-700">
-                  Same as Address
+                  parmanent address is same as address
                 </span>
               </label>
             </div>
@@ -175,7 +176,9 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 }`}
                 type="text"
                 name="permanent_address"
-                value={formData.permanent_address}
+                value={
+                  isSameAddress ? formData.address : formData.permanent_address
+                }
                 onChange={handleChange}
                 placeholder="Enter permanent address"
                 disabled={isSameAddress}
