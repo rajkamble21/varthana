@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import UserUpdateModal from "../UserUpdateModal/UserUpdateModal";
 import { useSnackbar } from "notistack";
 import { baseUrl } from "../../apiConfig/apiConfig";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -15,11 +17,14 @@ const UserList = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const router = useRouter();
+  let token = null;
 
-  if (!localStorage.getItem("token")) {
-    router.push("/login");
+  if (typeof window !== "undefined") {
+    if (!localStorage.getItem("token")) {
+      router.push("/login");
+    }
+    token = localStorage.getItem("token");
   }
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -32,7 +37,7 @@ const UserList = () => {
 
         setUsers(res.data.users);
         setLoading(false);
-      } catch (err) {
+      } catch (error) {
         enqueueSnackbar(error.response.data.message, { variant: "error" });
         setLoading(false);
       }
@@ -95,14 +100,13 @@ const UserList = () => {
                     }}
                     className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition-all duration-300"
                   >
-                    <i className="fa-solid fa-pen-to-square"></i>{" "}
-                    <span>Edit</span>
+                    <FontAwesomeIcon icon={faPenToSquare} /> <span>Edit</span>
                   </button>
                   <button
                     onClick={() => deleteUser(user.id)}
                     className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition-all duration-300"
                   >
-                    <i className="fa-solid fa-trash"></i> <span>Delete</span>
+                    <FontAwesomeIcon icon={faTrash} /> <span>Delete</span>
                   </button>
                 </div>
               </div>
