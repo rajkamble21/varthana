@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const { getAllUsers } = require('../controllers/authController');
 const { validateBody, validateParams } = require('../middlewares/validate');
 const { deleteUserById, updateUserById, getUsersExceptLoggedInUser } = require('../controllers/userController');
 const { updateUserSchema } = require('../validations/userValidation');

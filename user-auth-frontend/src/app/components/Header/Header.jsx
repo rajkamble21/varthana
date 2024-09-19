@@ -11,8 +11,8 @@ const Header = () => {
   const pathname = usePathname();
 
   return (
-    <div className="flex justify-between items-center bg-green-500 px-6 py-2 sm:px-20 sm:py-4 text-white shadow-md shadow-green-700">
-      <Image className="block w-auto h-10 drop-shadow-lg" src={Logo} alt="Varthana Logo" />
+    <div className="flex justify-between items-center bg-green-500 px-6 py-2 sm:px-20  text-white shadow shadow-green-700">
+      <Image className="block w-20 h-16 drop-shadow-lg" src={Logo} alt="Varthana Logo" />
 
       {pathname === "/dashboard" && (
         <button

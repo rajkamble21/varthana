@@ -6,8 +6,8 @@ const updateUserSchema = joi.object({
     email: joi.string().email().required(),
     password: joi.string().custom(password).required(),
     phone: joi.string().custom(phone).required(),
-    address: joi.string().min(5).max(100).optional(),
-    permanent_address: joi.string().min(5).max(100).optional()
+    address: joi.string().min(5).max(100).required(),
+    permanent_address: joi.string().min(5).max(100).required(),
 })
 
 module.exports = {
