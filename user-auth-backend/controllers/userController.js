@@ -50,7 +50,7 @@ const updateUserById = async (req, res) => {
             return res.status(404).json({ message: `User with id:${req.params.id} not found !` });
         }
         let newUser = await updateUser(req.params.id, req.body);
-        return res.status(200).json({ message: 'User updated successfully', user : newUser })
+        return res.status(200).json({ message: 'User updated successfully', user: newUser })
     } catch (error) {
         return res.status(500).json({ message: error.message, error })
     }
