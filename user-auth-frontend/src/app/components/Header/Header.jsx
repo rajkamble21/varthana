@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Logo from "../../public/varthana.png";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import styles from "./Header.module.css";
 import { usePathname } from "next/navigation";
 
 const Header = () => {
@@ -12,11 +11,12 @@ const Header = () => {
   const pathname = usePathname();
 
   return (
-    <div className={styles.headerContainer}>
-      <Image className={styles.logo} src={Logo}></Image>
-      {pathname == "/" && (
+    <div className="flex justify-between items-center bg-green-500 px-6 py-2 sm:px-20 sm:py-4 text-white shadow-md shadow-green-700">
+      <Image className="block w-auto h-10 drop-shadow-lg" src={Logo} alt="Varthana Logo" />
+
+      {pathname === "/dashboard" && (
         <button
-          className={styles.logoutButton}
+          className="bg-white text-green-500 border-none px-4 py-2 rounded shadow-lg hover:bg-green-600 hover:text-white transition-all duration-300"
           onClick={() => {
             localStorage.clear();
             router.push("/login");
@@ -25,9 +25,10 @@ const Header = () => {
           Logout
         </button>
       )}
-      {pathname == "/login" && (
+
+      {pathname === "/login" && (
         <button
-          className={styles.logoutButton}
+          className="bg-white text-green-500 border-none px-4 py-2 rounded shadow-lg hover:bg-green-600 hover:text-white transition-all duration-300"
           onClick={() => {
             router.push("/register");
           }}
@@ -35,9 +36,10 @@ const Header = () => {
           Register
         </button>
       )}
-      {pathname == "/register" && (
+
+      {pathname === "/register" && (
         <button
-          className={styles.logoutButton}
+          className="bg-white text-green-500 border-none px-4 py-2 rounded shadow-lg hover:bg-green-600 hover:text-white transition-all duration-300"
           onClick={() => {
             router.push("/login");
           }}

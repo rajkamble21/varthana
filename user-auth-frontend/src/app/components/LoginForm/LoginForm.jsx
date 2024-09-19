@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import styles from "./LoginForm.module.css";
 import { useSnackbar } from "notistack";
 
 const LoginForm = () => {
@@ -30,7 +29,7 @@ const LoginForm = () => {
     }
 
     if (!formData.password) {
-      errors.password = "password is required!";
+      errors.password = "Password is required!";
       isValid = false;
     }
 
@@ -52,7 +51,7 @@ const LoginForm = () => {
         if (res.status === 200) {
           localStorage.setItem("token", res.data.token);
           enqueueSnackbar("Login successful!", { variant: "success" });
-          router.push("/");
+          router.push("/dashboard");
         }
       } catch (error) {
         console.log("error in handleLogin", error);
@@ -66,11 +65,17 @@ const LoginForm = () => {
     setFormData({ ...formData, [name]: value });
   };
   return (
-    <form className={styles.formContainer} onSubmit={handleLogin} noValidate>
-      <h2 className={styles.heading}>Login Form</h2>
-      <div className={styles.inputGroup}>
+    <form
+      className="flex flex-col max-w-md mx-auto p-8 mt-16 bg-white border border-gray-300 rounded-lg shadow-lg"
+      onSubmit={handleLogin}
+      noValidate
+    >
+      <h2 className="text-2xl font-bold text-green-600 text-center mb-6">
+        Login Form
+      </h2>
+      <div className="mb-4 flex flex-col gap-2">
         <input
-          className={styles.input}
+          className="px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
           type="email"
           name="email"
           placeholder="Enter your email"
@@ -78,23 +83,26 @@ const LoginForm = () => {
           onChange={handleChange}
         ></input>
         {fieldErrors.email && (
-          <p className={styles.errorMessage}>{fieldErrors.email}</p>
+          <p className="text-sm text-red-500">{fieldErrors.email}</p>
         )}
       </div>
-      <div className={styles.inputGroup}>
+      <div className="mb-4 flex flex-col gap-2">
         <input
-          className={styles.input}
+          className="px-4 py-3 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
           type="password"
           name="password"
-          placeholder="Enter you password"
+          placeholder="Enter your password"
           value={formData.password}
           onChange={handleChange}
         ></input>
         {fieldErrors.password && (
-          <p className={styles.errorMessage}>{fieldErrors.password}</p>
+          <p className="text-sm text-red-500">{fieldErrors.password}</p>
         )}
       </div>
-      <button className={styles.submitButton} type="submit">
+      <button
+        className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-green-600 transition-all duration-300"
+        type="submit"
+      >
         Submit
       </button>
     </form>

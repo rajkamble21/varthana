@@ -5,7 +5,7 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
-      <UserList />
+      <h1>404</h1>
     </div>
   );
 }

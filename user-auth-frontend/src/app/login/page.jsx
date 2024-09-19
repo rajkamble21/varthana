@@ -3,10 +3,6 @@ import LoginForm from "../components/LoginForm/LoginForm";
 import { SnackbarProvider } from "notistack";
 
 export default function Login() {
-  const pageStyle = {
-    height: "75vh",
-  };
-
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -15,7 +11,7 @@ export default function Login() {
         horizontal: "center",
       }}
     >
-      <div style={pageStyle}>
+      <div clssName="h-screen">
         <LoginForm />
       </div>
     </SnackbarProvider>

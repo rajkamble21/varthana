@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import styles from "./RegisterForm.module.css";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 
@@ -24,6 +23,7 @@ const RegisterForm = () => {
   const validateFields = () => {
     let errors = {};
     let isValid = true;
+
     if (!formData.name) {
       errors.name = "Name is required!";
       isValid = false;
@@ -38,24 +38,24 @@ const RegisterForm = () => {
     }
 
     if (!formData.password) {
-      errors.password = "password is required!";
+      errors.password = "Password is required!";
       isValid = false;
     } else if (formData.password.length < 6) {
-      errors.password = "password must be 6 characters long";
+      errors.password = "Password must be at least 6 characters long";
       isValid = false;
     } else if (!formData.password.match(/\d/)) {
-      errors.password = "password must contain at least one number";
+      errors.password = "Password must contain at least one number";
       isValid = false;
-      router.push("/");
     } else if (!formData.password.match(/[a-zA-Z]/)) {
-      errors.password = "password must contain at leats one alphabate";
+      errors.password = "Password must contain at least one alphabet";
       isValid = false;
     } else if (!formData.password.match(/[!@#$%^&*()_+{}\[\]:;<>,.?]/)) {
-      errors.password = "password must contain at least on especial character";
+      errors.password = "Password must contain at least one special character";
+      isValid = false;
     }
 
     if (!formData.phone) {
-      errors.phone = "phone number is required!";
+      errors.phone = "Phone number is required!";
       isValid = false;
     } else if (!formData.phone.match(/^[0-9]{10}$/)) {
       errors.phone = "Phone number must have 10 digits";
@@ -79,12 +79,11 @@ const RegisterForm = () => {
 
         if (res.status === 201) {
           setFormData({ name: "", email: "", password: "", phone: "" });
-          enqueueSnackbar("Registration successful!, Please Login", {
+          enqueueSnackbar("Registration successful! Please Login", {
             variant: "success",
           });
         }
       } catch (error) {
-        console.log("error in handleRegister", error);
         enqueueSnackbar(error.response.data.message, { variant: "error" });
       }
     }
@@ -94,62 +93,77 @@ const RegisterForm = () => {
     let { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
   return (
-    <form onSubmit={handleRegister} className={styles.formContainer} noValidate>
-      <h2 className={styles.heading}>Registration Form</h2>
-      <div className={styles.inputGroup}>
+    <form
+      onSubmit={handleRegister}
+      className="max-w-md mx-auto mt-16 bg-white p-6 shadow-lg rounded-lg"
+      noValidate
+    >
+      <h2 className="text-2xl font-bold text-green-600 text-center mb-4">
+        Registration Form
+      </h2>
+
+      <div className="mb-4">
         <input
-          className={styles.input}
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
           type="text"
           name="name"
           placeholder="Enter your name"
           value={formData.name}
           onChange={handleChange}
-        ></input>
+        />
         {fieldErrors.name && (
-          <p className={styles.errorMessage}>{fieldErrors.name}</p>
+          <p className="text-red-500 text-sm">{fieldErrors.name}</p>
         )}
       </div>
-      <div className={styles.inputGroup}>
+
+      <div className="mb-4">
         <input
-          className={styles.input}
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
           type="email"
           name="email"
           placeholder="Enter your email"
           value={formData.email}
           onChange={handleChange}
-        ></input>
+        />
         {fieldErrors.email && (
-          <p className={styles.errorMessage}>{fieldErrors.email}</p>
+          <p className="text-red-500 text-sm">{fieldErrors.email}</p>
         )}
       </div>
-      <div className={styles.inputGroup}>
+
+      <div className="mb-4">
         <input
-          className={styles.input}
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
           type="password"
           name="password"
-          placeholder="Enter you password"
+          placeholder="Enter your password"
           value={formData.password}
           onChange={handleChange}
-        ></input>
+        />
         {fieldErrors.password && (
-          <p className={styles.errorMessage}>{fieldErrors.password}</p>
+          <p className="text-red-500 text-sm">{fieldErrors.password}</p>
         )}
       </div>
-      <div className={styles.inputGroup}>
+
+      <div className="mb-4">
         <input
-          className={styles.input}
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
           type="text"
           name="phone"
-          placeholder="Enter you phone"
+          placeholder="Enter your phone number"
           value={formData.phone}
           onChange={handleChange}
-        ></input>
+        />
         {fieldErrors.phone && (
-          <p className={styles.errorMessage}>{fieldErrors.phone}</p>
+          <p className="text-red-500 text-sm">{fieldErrors.phone}</p>
         )}
       </div>
-      <button type="submit" className={styles.submitButton}>
+
+      <button
+        type="submit"
+        className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition-all duration-300"
+      >
         Submit
       </button>
     </form>

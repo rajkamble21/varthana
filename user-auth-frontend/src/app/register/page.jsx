@@ -3,10 +3,6 @@ import RegisterForm from "../components/RegisterForm/RegisterForm";
 import { SnackbarProvider } from "notistack";
 
 export default function Register() {
-  const pageStyle = {
-    height: "75vh",
-  };
-
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -15,7 +11,7 @@ export default function Register() {
         horizontal: "center",
       }}
     >
-      <div style={pageStyle}>
+      <div clssName="h-screen">
         <RegisterForm />
       </div>
     </SnackbarProvider>
