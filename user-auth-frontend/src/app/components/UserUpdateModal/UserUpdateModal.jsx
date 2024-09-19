@@ -10,6 +10,14 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     permanent_address: user.permanent_address || "",
   });
 
+  const [fieldErrors, setFieldErrors] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    permanent_address: "",
+  });
+
   const [isSameAddress, setIsSameAddress] = useState(false);
 
   const handleChange = (e) => {
@@ -24,6 +32,52 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     } else {
       setFormData({ ...formData, permanent_address: user.permanent_address });
       setIsSameAddress(false);
+    }
+  };
+
+  const validateFields = () => {
+    let errors = {};
+    let isValid = true;
+
+    if (!formData.name) {
+      errors.name = "Name is required!";
+      isValid = false;
+    }
+
+    if (!formData.phone) {
+      errors.phone = "Phone number is required!";
+      isValid = false;
+    } else if (!formData.phone.match(/^[0-9]{10}$/)) {
+      errors.phone = "Phone number must have 10 digits";
+      isValid = false;
+    }
+
+    if (!formData.address) {
+      errors.address = "Address field is required!";
+      isValid = false;
+    } else if (formData.address.length < 15) {
+      errors.address = "Address must be greater than 15 character!";
+      isValid = false;
+    }
+
+    if (!formData.permanent_address) {
+      errors.permanent_address = "Permanent address field is required!";
+      isValid = false;
+    } else if (formData.permanent_address.length < 15) {
+      errors.permanent_address =
+        "Permanent address must be greater than 15 character!";
+      isValid = false;
+    }
+
+    setFieldErrors(errors);
+
+    return isValid;
+  };
+
+  const handleUpdateUser = (id, formData) => {
+    console.log(validateFields());
+    if (validateFields()) {
+      updateUser(id, formData);
     }
   };
 
@@ -47,6 +101,9 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
               placeholder="Enter name"
               required
             />
+            {fieldErrors.name && (
+              <p className="text-red-500 text-sm">{fieldErrors.name}</p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
@@ -75,6 +132,9 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
               placeholder="Enter phone"
               required
             />
+            {fieldErrors.phone && (
+              <p className="text-red-500 text-sm">{fieldErrors.phone}</p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
@@ -88,6 +148,9 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
               onChange={handleChange}
               placeholder="Enter address"
             />
+            {fieldErrors.address && (
+              <p className="text-red-500 text-sm">{fieldErrors.address}</p>
+            )}
           </div>
           <div className="mb-4">
             <label className="inline-flex items-center">
@@ -114,6 +177,11 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
               placeholder="Enter permanent address"
               disabled={isSameAddress}
             />
+            {fieldErrors.permanent_address && (
+              <p className="text-red-500 text-sm">
+                {fieldErrors.permanent_address}
+              </p>
+            )}
           </div>
           <div className="flex justify-between">
             <button
@@ -126,7 +194,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
             <button
               type="button"
               className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors"
-              onClick={() => updateUser(user.id, formData)}
+              onClick={() => handleUpdateUser(user.id, formData)}
             >
               Update
             </button>
