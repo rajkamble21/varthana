@@ -25,14 +25,6 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // const handleSameAddress = () => {
-  //   if (!isSameAddress) {
-  //     setIsSameAddress(true);
-  //   } else {
-  //     setIsSameAddress(false);
-  //   }
-  // };
-
   const validateFields = (formData) => {
     let errors = {};
     let isValid = true;
@@ -114,7 +106,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 Email
               </label>
               <input
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm p-2 cursor-not-allowed"
+                className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 cursor-not-allowed"
                 type="email"
                 name="email"
                 value={formData.email}
@@ -194,14 +186,14 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
             <div className="flex justify-between">
               <button
                 type="button"
-                className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-colors"
+                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
                 onClick={() => setOpenModal(false)}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors"
+                className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
                 onClick={() => handleUpdateUser(user.id, formData)}
               >
                 Update

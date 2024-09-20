@@ -14,7 +14,7 @@ const Header = () => {
     <div className="bg-green-500 shadow shadow-green-700">
       <div className="container m-auto flex justify-between items-center  px-6 sm:px-20  text-white ">
         <Image
-          className="block w-20 h-20 drop-shadow-lg cursor-pointer	"
+          className="block w-20 h-20 drop-shadow-lg cursor-pointer"
           src={Logo}
           alt="Varthana Logo"
           priority

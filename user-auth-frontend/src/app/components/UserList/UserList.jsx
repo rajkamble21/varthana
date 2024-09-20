@@ -84,7 +84,7 @@ const UserList = () => {
   return (
     <>
       <div className="container mx-auto">
-        <div className="border border-gray-300 rounded-lg w-5/6 mx-auto mt-16 p-6 flex flex-col items-center gap-4 shadow-lg bg-gray-100">
+        <div className="rounded-lg w-5/6 mx-auto my-16 p-6 flex flex-col items-center gap-4 shadow-lg bg-gray-100">
           <h1 className="text-2xl font-bold text-green-600">User List</h1>
           {loading && <p className="text-gray-700">Loading users...</p>}
           <div className="w-full">
@@ -101,13 +101,13 @@ const UserList = () => {
                         setOpenModal(true);
                         setCurrentUser(user);
                       }}
-                      className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition-all duration-300"
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600"
                     >
                       <FontAwesomeIcon icon={faPenToSquare} /> <span>Edit</span>
                     </button>
                     <button
                       onClick={() => deleteUser(user.id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition-all duration-300"
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600"
                     >
                       <FontAwesomeIcon icon={faTrash} /> <span>Delete</span>
                     </button>
