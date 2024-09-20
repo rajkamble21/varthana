@@ -83,7 +83,11 @@ const RegisterForm = () => {
           });
         }
       } catch (error) {
-        enqueueSnackbar(error.response.data.message, { variant: "error" });
+        console.log("error in handleRegister", error);
+        let errorMessage = error.response?.data.message
+          ? error.response.data.message
+          : error.message;
+        enqueueSnackbar(errorMessage, { variant: "error" });
       }
     }
   };

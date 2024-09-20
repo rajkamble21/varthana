@@ -54,7 +54,10 @@ const LoginForm = () => {
         }
       } catch (error) {
         console.log("error in handleLogin", error);
-        enqueueSnackbar(error.response.data.message, { variant: "error" });
+        let errorMessage = error.response?.data.message
+        ? error.response.data.message
+        : error.message;
+      enqueueSnackbar(errorMessage, { variant: "error" });
       }
     }
   };

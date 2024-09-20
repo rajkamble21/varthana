@@ -39,7 +39,10 @@ const UserList = () => {
         setUsers(res.data.users);
         setLoading(false);
       } catch (error) {
-        enqueueSnackbar(error.response.data.message, { variant: "error" });
+        let errorMessage = error.response?.data.message
+          ? error.response.data.message
+          : error.message;
+        enqueueSnackbar(errorMessage, { variant: "error" });
         setLoading(false);
       }
     };
@@ -62,7 +65,10 @@ const UserList = () => {
         setOpenModal(false);
       }
     } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
+      let errorMessage = error.response?.data.message
+        ? error.response.data.message
+        : error.message;
+      enqueueSnackbar(errorMessage, { variant: "error" });
     }
   };
 
@@ -78,7 +84,10 @@ const UserList = () => {
         enqueueSnackbar("User deleted successfully", { variant: "success" });
       }
     } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
+      let errorMessage = error.response?.data.message
+        ? error.response.data.message
+        : error.message;
+      enqueueSnackbar(errorMessage, { variant: "error" });
     }
   };
 
