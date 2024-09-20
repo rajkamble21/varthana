@@ -6,8 +6,8 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     name: user.name || "",
     email: user.email || "",
     phone: user.phone || "",
-    address: user.address || "",
-    permanent_address: user.permanent_address || "",
+    address: user.Address?.address.current_address || "",
+    permanent_address: user.Address?.address.permanent_address || "",
   });
 
   const [fieldErrors, setFieldErrors] = useState({
@@ -33,7 +33,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
   //   }
   // };
 
-  const validateFields = () => {
+  const validateFields = (formData) => {
     let errors = {};
     let isValid = true;
 
@@ -77,7 +77,9 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
       ? { ...formData, permanent_address: formData.address }
       : formData;
 
-    if (validateFields()) {
+    console.log("updatedFormData", updatedFormData);
+
+    if (validateFields(updatedFormData)) {
       updateUser(id, updatedFormData);
     }
   };

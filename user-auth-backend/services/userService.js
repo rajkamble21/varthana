@@ -1,7 +1,7 @@
 const { where } = require('sequelize');
 const { Op } = require('sequelize');
 
-const { User } = require('../models');
+const { User, Address } = require('../models');
 
 const findUserById = async (id) => {
     try {
@@ -28,7 +28,8 @@ const getUsersExceptOne = async (id) => {
                 id: {
                     [Op.ne]: id
                 }
-            }
+            },
+            include: [{ model: Address}]
         });
         return users;
     } catch (error) {
@@ -38,8 +39,35 @@ const getUsersExceptOne = async (id) => {
 
 const updateUser = async (id, requestBody) => {
     try {
-        const user = await User.findByPk(id);
-        await user.update(requestBody);
+        const user = await User.findByPk(id, {
+            include: [{ model: Address }]
+        });
+
+        const { address, permanent_address, ...userData } = requestBody;
+
+        await user.update(userData);
+        if (user.addressId) {
+            await user.Address.update({
+                address: {
+                    current_address: address,
+                    permanent_address: permanent_address
+                }
+            });
+        } else {
+            const newAddress = await Address.create({
+                address: {
+                    current_address: address,
+                    permanent_address: permanent_address
+                }
+            });
+            await user.update({ addressId: newAddress.id });
+            const updatedUser = await User.findByPk(id, {
+                include: [{ model: Address }]
+            });
+
+            return updatedUser;
+
+        }
         return user;
     } catch (error) {
         console.log("error during updateUser", error);

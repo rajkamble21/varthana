@@ -47,6 +47,7 @@ const hashedPassword = await bcrypt.hash(password, 10);
 
 
 
+npx sequelize model:generate --name Address --attributes address:jsonb
 
 
 

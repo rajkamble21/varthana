@@ -35,6 +35,7 @@ const UserList = () => {
           },
         });
 
+        console.log("fetchUsers", res.data);
         setUsers(res.data.users);
         setLoading(false);
       } catch (error) {
@@ -53,6 +54,7 @@ const UserList = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log("updateUser", res.data);
       if (res.status === 200) {
         setUsers(users.map((user) => (user.id == id ? res.data.user : user)));
         enqueueSnackbar("User updated successfully", { variant: "success" });

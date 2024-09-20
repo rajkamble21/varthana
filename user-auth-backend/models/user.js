@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.belongsTo(models.Address, { foreignKey: 'addressId'});
     }
 
     validatePassword(password) {
@@ -24,8 +25,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: DataTypes.STRING,
     phone: DataTypes.STRING,
-    address: DataTypes.STRING,
-    permanent_address: DataTypes.STRING,
+    addressId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Addresses',
+        key: 'id'
+      }
+    }
   }, {
     sequelize,
     modelName: 'User',
