@@ -83,7 +83,7 @@ const updateUser = async (id, requestBody) => {
                 }
             });
             await user.update({ addressId: newAddress.id });
-            
+
             const updatedUser = await User.findByPk(id, {
                 include: [{ model: Address }]
             });
@@ -100,12 +100,21 @@ const updateUser = async (id, requestBody) => {
 
 const deleteUser = async (id) => {
     try {
-        const user = await User.findByPk(id);
-        await user.destroy();
+        const user = await User.findByPk(id, {
+            include: [{ model: Address }]
+        });
+        if (user) {
+            if (user.Address) {
+                await user.Address.destroy();
+            }
+            await user.destroy();
+            console.log('User and associated address deleted successfully.');
+        }
     } catch (error) {
-        console.log("error during deleteUser", error);
+        console.log("Error during deleteUser:", error);
     }
-}
+};
+
 
 module.exports = {
     updateUser,

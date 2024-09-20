@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      User.belongsTo(models.Address, { foreignKey: 'addressId' });
+      User.belongsTo(models.Address, { foreignKey: 'addressId', onDelete: 'CASCADE' });
     }
 
     validatePassword(password) {
