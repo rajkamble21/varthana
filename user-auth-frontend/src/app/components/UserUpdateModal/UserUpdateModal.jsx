@@ -6,7 +6,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     name: user.name || "",
     email: user.email || "",
     phone: user.phone || "",
-    address: user.Address?.address.current_address || "",
+    current_address: user.Address?.address.current_address || "",
     permanent_address: user.Address?.address.permanent_address || "",
   });
 
@@ -14,7 +14,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     name: "",
     email: "",
     phone: "",
-    address: "",
+    current_address: "",
     permanent_address: "",
   });
 
@@ -42,11 +42,11 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
       isValid = false;
     }
 
-    if (!formData.address) {
-      errors.address = "Address field is required!";
+    if (!formData.current_address) {
+      errors.current_address = "Address field is required!";
       isValid = false;
-    } else if (formData.address.length < 15) {
-      errors.address = "Address must be greater than 15 character!";
+    } else if (formData.current_address.length < 15) {
+      errors.current_address = "Address must be greater than 15 character!";
       isValid = false;
     }
 
@@ -66,7 +66,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
 
   const handleUpdateUser = (id, formData) => {
     const updatedFormData = isSameAddress
-      ? { ...formData, permanent_address: formData.address }
+      ? { ...formData, permanent_address: formData.current_address }
       : formData;
 
     console.log("updatedFormData", updatedFormData);
@@ -134,18 +134,18 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
-                Address
+                Current address
               </label>
               <input
                 className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
                 type="text"
-                name="address"
-                value={formData.address}
+                name="current_address"
+                value={formData.current_address}
                 onChange={handleChange}
-                placeholder="Enter address"
+                placeholder="Enter current address"
               />
-              {fieldErrors.address && (
-                <p className="text-red-500 text-sm">{fieldErrors.address}</p>
+              {fieldErrors.current_address && (
+                <p className="text-red-500 text-sm">{fieldErrors.current_address}</p>
               )}
             </div>
             <div className="mb-4">
@@ -171,7 +171,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 type="text"
                 name="permanent_address"
                 value={
-                  isSameAddress ? formData.address : formData.permanent_address
+                  isSameAddress ? formData.current_address : formData.permanent_address
                 }
                 onChange={handleChange}
                 placeholder="Enter permanent address"

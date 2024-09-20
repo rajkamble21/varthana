@@ -43,20 +43,20 @@ const updateUser = async (id, requestBody) => {
             include: [{ model: Address }]
         });
 
-        const { address, permanent_address, ...userData } = requestBody;
+        const { current_address, permanent_address, ...userData } = requestBody;
 
         await user.update(userData);
         if (user.addressId) {
             await user.Address.update({
                 address: {
-                    current_address: address,
+                    current_address: current_address,
                     permanent_address: permanent_address
                 }
             });
         } else {
             const newAddress = await Address.create({
                 address: {
-                    current_address: address,
+                    current_address: current_address,
                     permanent_address: permanent_address
                 }
             });

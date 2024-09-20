@@ -48,6 +48,7 @@ const UserList = () => {
   }, []);
 
   const updateUser = async (id, formData) => {
+    console.log("updateUser", formData);
     try {
       const res = await axios.patch(`${baseUrl}/users/${id}`, formData, {
         headers: {
