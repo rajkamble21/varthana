@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React from "react";
 import UserList from "../components/UserList/UserList";
 import { SnackbarProvider } from "notistack";
@@ -12,7 +12,7 @@ const dashboard = () => {
         horizontal: "center",
       }}
     >
-      <UserList />{" "}
+      <UserList />
     </SnackbarProvider>
   );
 };

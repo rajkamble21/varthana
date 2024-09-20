@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { useSnackbar } from "notistack";
+import { useSnackbar, SnackbarProvider } from "notistack";
 import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {

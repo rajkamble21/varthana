@@ -11,9 +11,7 @@ export default function Login() {
         horizontal: "center",
       }}
     >
-      <div className="h-screen">
-        <LoginForm />
-      </div>
+      <LoginForm />
     </SnackbarProvider>
   );
 }

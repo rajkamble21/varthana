@@ -84,7 +84,7 @@ const UserList = () => {
   return (
     <>
       <div className="container mx-auto">
-        <div className="border border-gray-300 rounded-lg w-4/5 mx-auto mt-16 p-6 flex flex-col items-center gap-4 shadow-lg bg-gray-100">
+        <div className="border border-gray-300 rounded-lg w-5/6 mx-auto mt-16 p-6 flex flex-col items-center gap-4 shadow-lg bg-gray-100">
           <h1 className="text-2xl font-bold text-green-600">User List</h1>
           {loading && <p className="text-gray-700">Loading users...</p>}
           <div className="w-full">
@@ -92,9 +92,9 @@ const UserList = () => {
               users.map((user) => (
                 <div
                   key={user.id}
-                  className="bg-white rounded-lg shadow-md flex justify-between p-4 my-4"
+                  className="bg-white rounded-lg shadow-md flex justify-between items-center p-4 my-4"
                 >
-                  <p className="text-gray-800">{user.name}</p>
+                  <p className="text-gray-800 text-lg">{user.name}</p>
                   <div className="flex gap-2">
                     <button
                       onClick={() => {

@@ -11,9 +11,7 @@ export default function Register() {
         horizontal: "center",
       }}
     >
-      <div className="h-screen">
-        <RegisterForm />
-      </div>
+      <RegisterForm />
     </SnackbarProvider>
   );
 }
