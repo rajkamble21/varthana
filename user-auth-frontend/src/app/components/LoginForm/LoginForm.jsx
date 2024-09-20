@@ -50,7 +50,6 @@ const LoginForm = () => {
         console.log(res);
         if (res.status === 200) {
           localStorage.setItem("token", res.data.token);
-          enqueueSnackbar("Login successful!", { variant: "success" });
           router.push("/dashboard");
         }
       } catch (error) {

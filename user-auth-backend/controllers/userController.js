@@ -43,7 +43,6 @@ const deleteUserById = async (req, res) => {
 }
 
 const updateUserById = async (req, res) => {
-    console.log("updateUserById", req.body)
     try {
         let user = await findUserById(req.params.id);
         if (!user) {
