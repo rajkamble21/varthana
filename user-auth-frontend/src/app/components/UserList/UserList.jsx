@@ -50,7 +50,7 @@ const UserList = () => {
   const updateUser = async (id, formData) => {
     console.log("updateUser", formData);
     try {
-      const res = await axios.patch(`${baseUrl}/users/${id}`, formData, {
+      const res = await axios.put(`${baseUrl}/users/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

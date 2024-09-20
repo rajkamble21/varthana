@@ -1,8 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { useSnackbar, SnackbarProvider } from "notistack";
-import { useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +16,7 @@ const RegisterForm = () => {
     password: "",
     phone: "",
   });
-  const router = useRouter();
+
   const { enqueueSnackbar } = useSnackbar();
 
   const validateFields = () => {

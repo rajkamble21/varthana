@@ -12,6 +12,27 @@ const findUserById = async (id) => {
     }
 }
 
+const findUserByEmail = async (email) => {
+    try {
+        let user = await User.findOne({ where: { email } });
+        return user;
+    } catch (error) {
+        console.log(`error during findUserByEmail`, error);
+    }
+
+}
+
+const createUser = async (requestBody) => {
+    try {
+        const newUser = await User.create(requestBody);
+        return newUser;
+    } catch (error) {
+        console.log(`error during createUser`, error);
+    }
+}
+
+
+
 const getUsers = async () => {
     try {
         let users = await User.findAll();
@@ -29,7 +50,7 @@ const getUsersExceptOne = async (id) => {
                     [Op.ne]: id
                 }
             },
-            include: [{ model: Address}]
+            include: [{ model: Address }]
         });
         return users;
     } catch (error) {
@@ -46,21 +67,23 @@ const updateUser = async (id, requestBody) => {
         const { current_address, permanent_address, ...userData } = requestBody;
 
         await user.update(userData);
+
         if (user.addressId) {
             await user.Address.update({
                 address: {
-                    current_address: current_address,
-                    permanent_address: permanent_address
+                    current_address,
+                    permanent_address
                 }
             });
         } else {
             const newAddress = await Address.create({
                 address: {
-                    current_address: current_address,
-                    permanent_address: permanent_address
+                    current_address,
+                    permanent_address
                 }
             });
             await user.update({ addressId: newAddress.id });
+            
             const updatedUser = await User.findByPk(id, {
                 include: [{ model: Address }]
             });
@@ -89,5 +112,7 @@ module.exports = {
     deleteUser,
     findUserById,
     getUsersExceptOne,
-    getUsers
+    getUsers,
+    findUserByEmail,
+    createUser
 }

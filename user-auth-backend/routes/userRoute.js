@@ -5,7 +5,7 @@ const { updateUserSchema, userIdSchema } = require('../validations/userValidatio
 const auth = require('../middlewares/auth')
 
 router.get('/', auth, getUsersExceptLoggedInUser);
-router.patch('/:id', validateParams(userIdSchema), validateBody(updateUserSchema), auth, updateUserById);
+router.put('/:id', validateParams(userIdSchema), validateBody(updateUserSchema), auth, updateUserById);
 router.delete('/:id', validateParams(userIdSchema), auth, deleteUserById);
 
 module.exports = router;
