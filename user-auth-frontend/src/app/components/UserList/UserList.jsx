@@ -17,16 +17,20 @@ const UserList = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const router = useRouter();
-  let token = null;
-
-  if (typeof window !== "undefined") {
-    if (!localStorage.getItem("token")) {
-      router.push("/login");
-    }
-    token = localStorage.getItem("token");
-  }
+  let [token, setToken] = useState(null);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (!localStorage.getItem("token")) {
+        router.push("/login");
+      }
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!token) return;
+
     const fetchUsers = async () => {
       try {
         const res = await axios.get(`${baseUrl}/users`, {
@@ -48,7 +52,7 @@ const UserList = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, [token]);
 
   const updateUser = async (id, formData) => {
     console.log("updateUser", formData);
