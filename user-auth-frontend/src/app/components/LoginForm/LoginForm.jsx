@@ -50,14 +50,15 @@ const LoginForm = () => {
         console.log(res);
         if (res.status === 200) {
           localStorage.setItem("token", res.data.token);
+          localStorage.setItem("isAdmin", res.data.user.role == "admin");
           router.push("/dashboard");
         }
       } catch (error) {
         console.log("error in handleLogin", error);
         let errorMessage = error.response?.data.message
-        ? error.response.data.message
-        : error.message;
-      enqueueSnackbar(errorMessage, { variant: "error" });
+          ? error.response.data.message
+          : error.message;
+        enqueueSnackbar(errorMessage, { variant: "error" });
       }
     }
   };

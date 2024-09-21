@@ -14,6 +14,7 @@ const UserList = () => {
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const router = useRouter();
@@ -21,10 +22,13 @@ const UserList = () => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      if (!localStorage.getItem("token")) {
+      let storedToken = localStorage.getItem("token");
+      if (!storedToken) {
         router.push("/login");
       }
-      setToken(localStorage.getItem("token"));
+      setToken(storedToken);
+      console.log(JSON.parse(localStorage.getItem("isAdmin")));
+      setIsAdmin(JSON.parse(localStorage.getItem("isAdmin")));
     }
   }, []);
 
@@ -109,23 +113,26 @@ const UserList = () => {
                   className="bg-white rounded-lg shadow-md flex justify-between items-center p-4 my-4"
                 >
                   <p className="text-gray-800 text-lg">{user.name}</p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setOpenModal(true);
-                        setCurrentUser(user);
-                      }}
-                      className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600"
-                    >
-                      <FontAwesomeIcon icon={faPenToSquare} /> <span>Edit</span>
-                    </button>
-                    <button
-                      onClick={() => deleteUser(user.id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600"
-                    >
-                      <FontAwesomeIcon icon={faTrash} /> <span>Delete</span>
-                    </button>
-                  </div>
+                  {isAdmin && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setOpenModal(true);
+                          setCurrentUser(user);
+                        }}
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600"
+                      >
+                        <FontAwesomeIcon icon={faPenToSquare} />{" "}
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={() => deleteUser(user.id)}
+                        className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600"
+                      >
+                        <FontAwesomeIcon icon={faTrash} /> <span>Delete</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
           </div>

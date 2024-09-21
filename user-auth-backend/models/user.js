@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      User.belongsTo(models.Address, { foreignKey: 'addressId', onDelete: 'CASCADE' });
+      User.hasOne(models.Address, { foreignKey: 'userId', onDelete: 'CASCADE' });
     }
 
     validatePassword(password) {
@@ -29,12 +29,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    addressId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'Addresses',
-        key: 'id'
-      }
+    role: {
+      type: DataTypes.ENUM('admin', 'view', 'read'),
+      defaultValue: 'view',
+      allowNull: false
     }
   }, {
     sequelize,
