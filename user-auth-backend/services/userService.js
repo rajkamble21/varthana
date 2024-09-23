@@ -45,7 +45,11 @@ const getUsers = async () => {
 
 const getUsersExceptOne = async (id) => {
     try {
-        const users = await User.findAll({
+        const loggedInUser = await User.findByPk(id, {
+            include: [{ model: Address }]
+        });
+
+        let users = await User.findAll({
             where: {
                 id: {
                     [Op.ne]: id
@@ -53,6 +57,22 @@ const getUsersExceptOne = async (id) => {
             },
             include: [{ model: Address }]
         });
+
+        if (loggedInUser.role === "read") {
+            const loggedInUserCity = loggedInUser.Address?.address.current_address?.city;
+            if (!loggedInUserCity) {
+                return [];
+            }
+            users = users.reduce((acc, us) => {
+                if (us.Address?.address.current_address?.city &&
+                    us.Address?.address.current_address?.city == loggedInUserCity) {
+                    acc.push(us);
+                }
+                return acc;
+            }, [])
+
+        }
+
         return users;
     } catch (error) {
         console.log("error during getAllUsersExceptOne", error);
@@ -61,11 +81,34 @@ const getUsersExceptOne = async (id) => {
 
 const updateUser = async (id, requestBody) => {
     try {
+
+        const { current_street,
+            current_city,
+            current_state,
+            current_pincode,
+            permanent_street,
+            permanent_city,
+            permanent_state,
+            permanent_pincode,
+            ...userData } = requestBody;
+
         const user = await User.findByPk(id, {
             include: [{ model: Address }]
         });
 
-        const { current_address, permanent_address, ...userData } = requestBody;
+        const current_address = {
+            street: current_street,
+            city: current_city,
+            state: current_state,
+            pincode: current_pincode,
+        };
+
+        const permanent_address = {
+            street: permanent_street,
+            city: permanent_city,
+            state: permanent_state,
+            pincode: permanent_pincode,
+        };
 
         await user.update(userData);
 

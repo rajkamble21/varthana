@@ -14,7 +14,8 @@ const UserList = () => {
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [role, setRole] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const { enqueueSnackbar } = useSnackbar();
 
   const router = useRouter();
@@ -27,8 +28,8 @@ const UserList = () => {
         router.push("/login");
       }
       setToken(storedToken);
-      console.log(JSON.parse(localStorage.getItem("isAdmin")));
-      setIsAdmin(JSON.parse(localStorage.getItem("isAdmin")));
+      console.log(localStorage.getItem("role"));
+      setRole(localStorage.getItem("role"));
     }
   }, []);
 
@@ -99,42 +100,68 @@ const UserList = () => {
     }
   };
 
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
       <div className="container mx-auto">
         <div className="rounded-lg w-5/6 mx-auto my-16 p-6 flex flex-col items-center gap-4 shadow-lg bg-gray-100">
           <h1 className="text-2xl font-bold text-green-600">User List</h1>
-          {loading && <p className="text-gray-700">Loading users...</p>}
+
+          <input
+            type="text"
+            placeholder="Search by name..."
+            className="w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300 mb-4"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
           <div className="w-full">
-            {users.length > 0 &&
-              users.map((user) => (
-                <div
-                  key={user.id}
-                  className="bg-white rounded-lg shadow-md flex justify-between items-center p-4 my-4"
-                >
-                  <p className="text-gray-800 text-lg">{user.name}</p>
-                  {isAdmin && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setOpenModal(true);
-                          setCurrentUser(user);
-                        }}
-                        className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600"
-                      >
-                        <FontAwesomeIcon icon={faPenToSquare} />{" "}
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        onClick={() => deleteUser(user.id)}
-                        className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600"
-                      >
-                        <FontAwesomeIcon icon={faTrash} /> <span>Delete</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
+            {filteredUsers.length > 0 ? (
+              <>
+                {filteredUsers.map((user) => (
+                  <div
+                    key={user.id}
+                    className="bg-white rounded-lg shadow-md flex justify-between items-center p-4 my-4"
+                  >
+                    <p className="text-gray-800 text-lg">{user.name}</p>
+                    {role == "admin" && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setOpenModal(true);
+                            setCurrentUser(user);
+                          }}
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600"
+                        >
+                          <FontAwesomeIcon icon={faPenToSquare} />{" "}
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => deleteUser(user.id)}
+                          className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600"
+                        >
+                          <FontAwesomeIcon icon={faTrash} /> <span>Delete</span>
+                        </button>
+                      </div>
+                    )}
+                    {role == "read" && (
+                      <div>{user.Address.address.current_address.city}</div>
+                    )}
+                  </div>
+                ))}
+              </>
+            ) : loading ? (
+              <p className="text-gray-700">Loading users...</p>
+            ) : (
+              <div className="bg-white rounded-lg shadow-md flex justify-between items-center p-4 my-4">
+                <p className="text-gray-800 text-lg">
+                  Search results not found!
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

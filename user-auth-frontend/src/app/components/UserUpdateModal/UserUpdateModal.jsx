@@ -6,16 +6,27 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     name: user.name || "",
     email: user.email || "",
     phone: user.phone || "",
-    current_address: user.Address?.address.current_address || "",
-    permanent_address: user.Address?.address.permanent_address || "",
+    current_street: user.Address?.address.current_address?.street || "",
+    current_city: user.Address?.address.current_address?.city || "",
+    current_state: user.Address?.address.current_address?.state || "",
+    current_pincode: user.Address?.address.current_address?.pincode || "",
+    permanent_street: user.Address?.address.permanent_address?.street || "",
+    permanent_city: user.Address?.address.permanent_address?.city || "",
+    permanent_state: user.Address?.address.permanent_address?.state || "",
+    permanent_pincode: user.Address?.address.permanent_address?.pincode || "",
   });
 
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
-    email: "",
     phone: "",
-    current_address: "",
-    permanent_address: "",
+    current_street: "",
+    current_city: "",
+    current_state: "",
+    current_pincode: "",
+    permanent_street: "",
+    permanent_city: "",
+    permanent_state: "",
+    permanent_pincode: "",
   });
 
   const [isSameAddress, setIsSameAddress] = useState(false);
@@ -42,20 +53,49 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
       isValid = false;
     }
 
-    if (!formData.current_address) {
-      errors.current_address = "Address field is required!";
-      isValid = false;
-    } else if (formData.current_address.length < 15) {
-      errors.current_address = "Address must be greater than 15 character!";
+    if (!formData.current_street) {
+      errors.current_street = "street field is required!";
       isValid = false;
     }
 
-    if (!formData.permanent_address) {
-      errors.permanent_address = "Permanent address field is required!";
+    if (!formData.current_city) {
+      errors.current_city = "city field is required!";
       isValid = false;
-    } else if (formData.permanent_address.length < 15) {
-      errors.permanent_address =
-        "Permanent address must be greater than 15 character!";
+    }
+
+    if (!formData.current_pincode) {
+      errors.current_pincode = "pincode field is required!";
+      isValid = false;
+    } else if (!/^[0-9]{5,6}$/.test(formData.current_pincode)) {
+      errors.current_pincode = "Pincode must be 5 or 6 digits!";
+      isValid = false;
+    }
+
+    if (!formData.current_state) {
+      errors.current_state = "state field is required!";
+      isValid = false;
+    }
+
+    if (!formData.permanent_street) {
+      errors.permanent_street = "street field is required!";
+      isValid = false;
+    }
+
+    if (!formData.permanent_city) {
+      errors.permanent_city = "city field is required!";
+      isValid = false;
+    }
+
+    if (!formData.permanent_pincode) {
+      errors.permanent_pincode = "pincode field is required!";
+      isValid = false;
+    } else if (!/^[0-9]{5,6}$/.test(formData.permanent_pincode)) {
+      errors.permanent_pincode = "Pincode must be 5 or 6 digits!";
+      isValid = false;
+    }
+
+    if (!formData.permanent_state) {
+      errors.permanent_state = "state field is required!";
       isValid = false;
     }
 
@@ -66,7 +106,13 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
 
   const handleUpdateUser = (id, formData) => {
     const updatedFormData = isSameAddress
-      ? { ...formData, permanent_address: formData.current_address }
+      ? {
+          ...formData,
+          permanent_street: formData.current_street,
+          permanent_city: formData.current_city,
+          permanent_state: formData.current_state,
+          permanent_pincode: formData.current_pincode,
+        }
       : formData;
 
     console.log("updatedFormData", updatedFormData);
@@ -132,21 +178,68 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 <p className="text-red-500 text-sm">{fieldErrors.phone}</p>
               )}
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Current address
-              </label>
-              <input
-                className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
-                type="text"
-                name="current_address"
-                value={formData.current_address}
-                onChange={handleChange}
-                placeholder="Enter current address"
-              />
-              {fieldErrors.current_address && (
-                <p className="text-red-500 text-sm">{fieldErrors.current_address}</p>
-              )}
+            <label className="block text-sm font-medium text-gray-700">
+              Current address
+            </label>
+            <input
+              className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+              type="text"
+              name="current_street"
+              value={formData.current_street}
+              onChange={handleChange}
+              placeholder="Enter street"
+            />
+            {fieldErrors.current_street && (
+              <p className="text-red-500 text-sm">
+                {fieldErrors.current_street}
+              </p>
+            )}
+            <div className="flex gap-2">
+              <div className="mb-4">
+                <input
+                  className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+                  type="text"
+                  name="current_city"
+                  value={formData.current_city}
+                  onChange={handleChange}
+                  placeholder="Enter city"
+                />
+                {fieldErrors.current_city && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.current_city}
+                  </p>
+                )}
+              </div>
+              <div className="mb-4">
+                <input
+                  className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+                  type="text"
+                  name="current_pincode"
+                  value={formData.current_pincode}
+                  onChange={handleChange}
+                  placeholder="Enter pincode"
+                />
+                {fieldErrors.current_pincode && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.current_pincode}
+                  </p>
+                )}
+              </div>
+              <div className="mb-4">
+                <input
+                  className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+                  type="text"
+                  name="current_state"
+                  value={formData.current_state}
+                  onChange={handleChange}
+                  placeholder="Enter state"
+                />
+                {fieldErrors.current_state && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.current_state}
+                  </p>
+                )}
+              </div>
             </div>
             <div className="mb-4">
               <label className="inline-flex items-center">
@@ -160,28 +253,96 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 </span>
               </label>
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Permanent Address
-              </label>
-              <input
-                className={`mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 ${
-                  isSameAddress ? `cursor-not-allowed` : ``
-                }`}
-                type="text"
-                name="permanent_address"
-                value={
-                  isSameAddress ? formData.current_address : formData.permanent_address
-                }
-                onChange={handleChange}
-                placeholder="Enter permanent address"
-                disabled={isSameAddress}
-              />
-              {fieldErrors.permanent_address && (
-                <p className="text-red-500 text-sm">
-                  {fieldErrors.permanent_address}
-                </p>
-              )}
+            <label className="block text-sm font-medium text-gray-700">
+              Permanent address
+            </label>
+            <input
+              className={`mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 ${
+                isSameAddress ? `cursor-not-allowed` : ``
+              }`}
+              type="text"
+              name="permanent_street"
+              value={
+                isSameAddress
+                  ? formData.current_street
+                  : formData.permanent_street
+              }
+              onChange={handleChange}
+              placeholder="Enter street"
+              disabled={isSameAddress}
+            />
+            {fieldErrors.permanent_street && (
+              <p className="text-red-500 text-sm">
+                {fieldErrors.permanent_street}
+              </p>
+            )}
+            <div className="flex gap-2">
+              <div className="mb-4">
+                <input
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 ${
+                    isSameAddress ? `cursor-not-allowed` : ``
+                  }`}
+                  type="text"
+                  name="permanent_city"
+                  value={
+                    isSameAddress
+                      ? formData.current_city
+                      : formData.permanent_city
+                  }
+                  onChange={handleChange}
+                  placeholder="Enter city"
+                  disabled={isSameAddress}
+                />
+                {fieldErrors.permanent_city && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.permanent_city}
+                  </p>
+                )}
+              </div>
+              <div className="mb-4">
+                <input
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 ${
+                    isSameAddress ? `cursor-not-allowed` : ``
+                  }`}
+                  type="text"
+                  name="permanent_pincode"
+                  value={
+                    isSameAddress
+                      ? formData.current_pincode
+                      : formData.permanent_pincode
+                  }
+                  onChange={handleChange}
+                  placeholder="Enter pincode"
+                  disabled={isSameAddress}
+                />
+                {fieldErrors.permanent_pincode && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.permanent_pincode}
+                  </p>
+                )}
+              </div>
+              <div className="mb-4">
+                <input
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 ${
+                    isSameAddress ? `cursor-not-allowed` : ``
+                  }`}
+                  type="text"
+                  name="permanent_state"
+                  value={
+                    isSameAddress
+                      ? formData.current_state
+                      : formData.permanent_state
+                  }
+                  onChange={handleChange}
+                  placeholder="Enter state"
+                  disabled={isSameAddress}
+                />
+                {fieldErrors.permanent_state && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.permanent_state}
+                  </p>
+                )}
+              </div>
             </div>
             <div className="flex justify-between">
               <button
