@@ -1,0 +1,603 @@
+"use client";
+import React, { useState } from "react";
+// import validateAllFields from "./validateAllFields";
+
+const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
+  const [formData, setFormData] = useState({
+    name: user.name || "",
+    email: user.email || "",
+    phone: user.phone || "",
+    current_street: user.Address?.address.current_address?.street || "",
+    current_city: user.Address?.address.current_address?.city || "",
+    current_state: user.Address?.address.current_address?.state || "",
+    current_pincode: user.Address?.address.current_address?.pincode || "",
+    permanent_street: user.Address?.address.permanent_address?.street || "",
+    permanent_city: user.Address?.address.permanent_address?.city || "",
+    permanent_state: user.Address?.address.permanent_address?.state || "",
+    permanent_pincode: user.Address?.address.permanent_address?.pincode || "",
+  });
+
+  const [fieldErrors, setFieldErrors] = useState({
+    name: "",
+    phone: "",
+    current_street: "",
+    current_city: "",
+    current_state: "",
+    current_pincode: "",
+    permanent_street: "",
+    permanent_city: "",
+    permanent_state: "",
+    permanent_pincode: "",
+  });
+
+  const [isSameAddress, setIsSameAddress] = useState(false);
+
+  const validateField = (name, value) => {
+    let error = "";
+
+    if (isSameAddress && name.startsWith("permanent_")) {
+      return error;
+    }
+
+    switch (name) {
+      case "name": {
+        if (!value) {
+          error = "Name is required!";
+        }
+        break;
+      }
+
+      case "password": {
+        if (!value) {
+          error = "Password is required!";
+        } else if (value.length < 6) {
+          error = "Password must be at least 6 characters long";
+        } else if (!value.match(/\d/)) {
+          error = "Password must contain at least one number";
+        } else if (!value.match(/[a-zA-Z]/)) {
+          error = "Password must contain at least one alphabet";
+        } else if (!value.match(/[!@#$%^&*()_+{}\[\]:;<>,.?]/)) {
+          error = "Password must contain at least one special character";
+        }
+        break;
+      }
+
+      case "phone": {
+        if (!value) {
+          error = "Phone number is required!";
+        } else if (!value.match(/^[0-9]{10}$/)) {
+          error = "Phone number must have 10 digits";
+        }
+        break;
+      }
+
+      case "current_street": {
+        if (!value) {
+          error = "street field is required!";
+        }
+        break;
+      }
+
+      case "current_city": {
+        if (!value) {
+          error = "city field is required!";
+        }
+        break;
+      }
+
+      case "current_pincode": {
+        if (!value) {
+          error = "pincode field is required!";
+        } else if (!/^[0-9]{5,6}$/.test(value)) {
+          error = "Pincode must be 5 or 6 digits!";
+        }
+        break;
+      }
+
+      case "current_state": {
+        if (!value) {
+          error = "state field is required!";
+        }
+      }
+
+      case "permanent_street": {
+        if (!value) {
+          error = "street field is required!";
+        }
+        break;
+      }
+
+      case "permanent_city": {
+        if (!value) {
+          error = "city field is required!";
+        }
+        break;
+      }
+
+      case "permanent_pincode": {
+        if (!value) {
+          error = "pincode field is required!";
+        } else if (!/^[0-9]{5,6}$/.test(value)) {
+          error = "Pincode must be 5 or 6 digits!";
+        }
+        break;
+      }
+
+      case "permanent_state": {
+        if (!value) {
+          error = "state field is required!";
+        }
+      }
+
+      default: {
+        break;
+      }
+    }
+
+    return error;
+  };
+
+  const validateAllFields = () => {
+    let isValid = true;
+    const errors = {};
+    Object.keys(formData).forEach((key) => {
+      if (isSameAddress && key.startsWith("permanent_")) {
+        return;
+      }
+      const error = validateField(key, formData[key]);
+      if (error) {
+        errors[key] = error;
+        isValid = false;
+      }
+    });
+
+    setFieldErrors(errors);
+
+    return isValid;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    const error = validateField(name, value);
+    setFieldErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
+  };
+
+  const handleUpdateUser = (id, formData) => {
+    const updatedFormData = isSameAddress
+      ? {
+          ...formData,
+          permanent_street: formData.current_street,
+          permanent_city: formData.current_city,
+          permanent_state: formData.current_state,
+          permanent_pincode: formData.current_pincode,
+        }
+      : formData;
+
+    console.log("updatedFormData", updatedFormData);
+
+    if (validateAllFields()) {
+      updateUser(id, updatedFormData);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+      <div className="container mx-auto flex justify-center items-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
+          <h2 className="text-xl font-semibold mb-4 text-center">
+            Update User Details
+          </h2>
+          <form>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter name"
+                required
+              />
+              {fieldErrors.name && (
+                <p className="text-red-500 text-sm">{fieldErrors.name}</p>
+              )}
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 cursor-not-allowed"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter email"
+                disabled
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Phone
+              </label>
+              <input
+                className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Enter phone"
+                required
+              />
+              {fieldErrors.phone && (
+                <p className="text-red-500 text-sm">{fieldErrors.phone}</p>
+              )}
+            </div>
+            <label className="block text-sm font-medium text-gray-700">
+              Current address
+            </label>
+            <input
+              className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+              type="text"
+              name="current_street"
+              value={formData.current_street}
+              onChange={handleChange}
+              placeholder="Enter street"
+            />
+            {fieldErrors.current_street && (
+              <p className="text-red-500 text-sm">
+                {fieldErrors.current_street}
+              </p>
+            )}
+            <div className="flex gap-2">
+              <div className="mb-4">
+                <input
+                  className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+                  type="text"
+                  name="current_city"
+                  value={formData.current_city}
+                  onChange={handleChange}
+                  placeholder="Enter city"
+                />
+                {fieldErrors.current_city && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.current_city}
+                  </p>
+                )}
+              </div>
+              <div className="mb-4">
+                <input
+                  className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+                  type="text"
+                  name="current_pincode"
+                  value={formData.current_pincode}
+                  onChange={handleChange}
+                  placeholder="Enter pincode"
+                />
+                {fieldErrors.current_pincode && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.current_pincode}
+                  </p>
+                )}
+              </div>
+              <div className="mb-4">
+                <input
+                  className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+                  type="text"
+                  name="current_state"
+                  value={formData.current_state}
+                  onChange={handleChange}
+                  placeholder="Enter state"
+                />
+                {fieldErrors.current_state && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.current_state}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  checked={isSameAddress}
+                  onChange={() => setIsSameAddress(!isSameAddress)}
+                />
+                <span className="ml-2 text-sm font-medium text-gray-700">
+                  parmanent address is same as address
+                </span>
+              </label>
+            </div>
+            <label className="block text-sm font-medium text-gray-700">
+              Permanent address
+            </label>
+            <input
+              className={`mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 ${
+                isSameAddress ? `cursor-not-allowed` : ``
+              }`}
+              type="text"
+              name="permanent_street"
+              value={
+                isSameAddress
+                  ? formData.current_street
+                  : formData.permanent_street
+              }
+              onChange={handleChange}
+              placeholder="Enter street"
+              disabled={isSameAddress}
+            />
+            {!isSameAddress && fieldErrors.permanent_street && (
+              <p className="text-red-500 text-sm">
+                {fieldErrors.permanent_street}
+              </p>
+            )}
+            <div className="flex gap-2">
+              <div className="mb-4">
+                <input
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 ${
+                    isSameAddress ? `cursor-not-allowed` : ``
+                  }`}
+                  type="text"
+                  name="permanent_city"
+                  value={
+                    isSameAddress
+                      ? formData.current_city
+                      : formData.permanent_city
+                  }
+                  onChange={handleChange}
+                  placeholder="Enter city"
+                  disabled={isSameAddress}
+                />
+                {!isSameAddress && fieldErrors.permanent_city && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.permanent_city}
+                  </p>
+                )}
+              </div>
+              <div className="mb-4">
+                <input
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 ${
+                    isSameAddress ? `cursor-not-allowed` : ``
+                  }`}
+                  type="text"
+                  name="permanent_pincode"
+                  value={
+                    isSameAddress
+                      ? formData.current_pincode
+                      : formData.permanent_pincode
+                  }
+                  onChange={handleChange}
+                  placeholder="Enter pincode"
+                  disabled={isSameAddress}
+                />
+                {!isSameAddress && fieldErrors.permanent_pincode && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.permanent_pincode}
+                  </p>
+                )}
+              </div>
+              <div className="mb-4">
+                <input
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2 ${
+                    isSameAddress ? `cursor-not-allowed` : ``
+                  }`}
+                  type="text"
+                  name="permanent_state"
+                  value={
+                    isSameAddress
+                      ? formData.current_state
+                      : formData.permanent_state
+                  }
+                  onChange={handleChange}
+                  placeholder="Enter state"
+                  disabled={isSameAddress}
+                />
+                {!isSameAddress && fieldErrors.permanent_state && (
+                  <p className="text-red-500 text-sm">
+                    {fieldErrors.permanent_state}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <button
+                type="button"
+                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                onClick={() => setOpenModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+                onClick={() => handleUpdateUser(user.id, formData)}
+              >
+                Update
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UserUpdateModal;
+
+
+
+pgAdmin Runtime Environment
+--------------------------------------------------------
+Python Path: "/snap/pgadmin4/10/usr/pgadmin4/venv/bin/python3"
+Runtime Config File: "/home/raj-kamble/snap/pgadmin4/10/.config/pgadmin4/config.json"
+Webapp Path: "/snap/pgadmin4/10/usr/pgadmin4/web/pgAdmin4.py"
+pgAdmin Command: "/snap/pgadmin4/10/usr/pgadmin4/venv/bin/python3 -s /snap/pgadmin4/10/usr/pgadmin4/web/pgAdmin4.py"
+Environment: 
+  - SHELL: /bin/bash
+  - SESSION_MANAGER: local/raj-kamble-HP-Laptop-15-di1xxx:@/tmp/.ICE-unix/1826,unix/raj-kamble-HP-Laptop-15-di1xxx:/tmp/.ICE-unix/1826
+  - __EGL_EXTERNAL_PLATFORM_CONFIG_DIRS: /snap/pgadmin4/10/gpu-2404/usr/share/egl/egl_external_platform.d
+  - QT_ACCESSIBILITY: 1
+  - __EGL_VENDOR_LIBRARY_DIRS: /snap/pgadmin4/10/gpu-2404/usr/share/glvnd/egl_vendor.d
+  - SNAP_REVISION: 10
+  - XDG_CONFIG_DIRS: /snap/pgadmin4/10/gnome-platform/etc/xdg:/etc/xdg/xdg-ubuntu:/etc/xdg
+  - XDG_MENU_PREFIX: gnome-
+  - GNOME_DESKTOP_SESSION_ID: this-is-deprecated
+  - CLUTTER_BACKEND: wayland
+  - SNAP_REAL_HOME: /home/raj-kamble
+  - VK_LAYER_PATH: /snap/pgadmin4/10/gpu-2404/usr/share/vulkan/implicit_layer.d/:/snap/pgadmin4/10/gpu-2404/usr/share/vulkan/explicit_layer.d/
+  - SNAP_USER_COMMON: /home/raj-kamble/snap/pgadmin4/common
+  - FONTCONFIG_PATH: /snap/pgadmin4/10/gnome-platform/etc/fonts
+  - GNOME_SHELL_SESSION_MODE: ubuntu
+  - SSH_AUTH_SOCK: /run/user/1000/keyring/ssh
+  - XDG_DATA_HOME: /home/raj-kamble/snap/pgadmin4/10/.local/share
+  - GNOTIFICATION_BACKEND: freedesktop
+  - PIPEWIRE_MODULE_DIR: /snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/pipewire-0.3
+  - XDG_CONFIG_HOME: /home/raj-kamble/snap/pgadmin4/10/.config
+  - XCURSOR_PATH: /snap/pgadmin4/10/data-dir/icons:/snap/pgadmin4/10/gnome-platform/usr/share/icons
+  - MEMORY_PRESSURE_WRITE: c29tZSAyMDAwMDAgMjAwMDAwMAA=
+  - SNAP_INSTANCE_KEY: 
+  - XMODIFIERS: @im=ibus
+  - DESKTOP_SESSION: ubuntu
+  - GDK_PIXBUF_MODULE_FILE: /home/raj-kamble/snap/pgadmin4/common/.cache/gdk-pixbuf-loaders.cache
+  - BAMF_DESKTOP_FILE_HINT: /var/lib/snapd/desktop/applications/pgadmin4_pgadmin4.desktop
+  - GTK_MODULES: gail:atk-bridge
+  - SNAP_EUID: 1000
+  - PWD: /home/raj-kamble
+  - LOGNAME: raj-kamble
+  - XDG_SESSION_DESKTOP: ubuntu
+  - XDG_SESSION_TYPE: wayland
+  - SYSTEMD_EXEC_PID: 1870
+  - SPA_PLUGIN_DIR: /snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/spa-0.2
+  - XAUTHORITY: /run/user/1000/.mutter-Xwaylandauth.4X22U2
+  - TEMPDIR: /tmp
+  - SNAP_CONTEXT: 2WSapeSHph24B_pBwDkOB2yxYzI-lUgom0NRj99lT4obV7IInAYx
+  - GJS_DEBUG_TOPICS: JS ERROR;JS LOG
+  - GST_PLUGIN_SCANNER: /snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner
+  - LD_PRELOAD: :/snap/pgadmin4/10/gnome-platform/$LIB/bindtextdomain.so
+  - GI_TYPELIB_PATH: /snap/pgadmin4/10/gnome-platform/usr/lib/girepository-1.0:/snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/girepository-1.0
+  - HOME: /home/raj-kamble/snap/pgadmin4/10
+  - USERNAME: raj-kamble
+  - IM_CONFIG_PHASE: 1
+  - LANG: en_US.UTF-8
+  - XDG_CURRENT_DESKTOP: Unity
+  - MEMORY_PRESSURE_WATCH: /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/session.slice/org.gnome.Shell@wayland.service/memory.pressure
+  - WAYLAND_DISPLAY: wayland-0
+  - NOTIFY_IGNORE_PORTAL: 1
+  - SNAP_ARCH: amd64
+  - SNAP_INSTANCE_NAME: pgadmin4
+  - SNAP_USER_DATA: /home/raj-kamble/snap/pgadmin4/10
+  - TMPDIR: /tmp
+  - DRIRC_CONFIGDIR: /snap/pgadmin4/10/gpu-2404/usr/drirc.d
+  - INVOCATION_ID: c2492d1a007c427fbcc65e82f4d3320f
+  - SNAP_DESKTOP_RUNTIME: /snap/pgadmin4/10/gnome-platform
+  - SNAP_LAUNCHER_ARCH_TRIPLET: x86_64-linux-gnu
+  - MANAGERPID: 1597
+  - SNAP_REEXEC: 
+  - SNAP_UID: 1000
+  - PIPEWIRE_CONFIG_DIR: /snap/pgadmin4/10/gnome-platform/usr/share/pipewire
+  - QT_QPA_PLATFORM: wayland-egl
+  - XDG_CACHE_HOME: /home/raj-kamble/snap/pgadmin4/common/.cache
+  - GJS_DEBUG_OUTPUT: stderr
+  - GNOME_SETUP_DISPLAY: :1
+  - XDG_SESSION_CLASS: user
+  - LIBGWEATHER_LOCATIONS_PATH: /snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/libgweather-4/Locations.bin
+  - PYTHONPATH: /snap/pgadmin4/10/gnome-platform/usr/lib/python3/dist-packages
+  - GTK_PATH: /snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/gtk-2.0:/snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/gtk-3.0:/snap/pgadmin4/10/gnome-platform/usr/lib/gtk-3.0:/snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/gtk-4.0
+  - XLOCALEDIR: /snap/pgadmin4/10/gpu-2404/usr/share/X11/locale
+  - LIBTHAI_DICTDIR: /snap/pgadmin4/10/gnome-platform/usr/share/libthai/
+  - USER: raj-kamble
+  - SNAP: /snap/pgadmin4/10
+  - SNAP_COMMON: /var/snap/pgadmin4/common
+  - SNAP_VERSION: 8.12
+  - DISPLAY: :0
+  - SHLVL: 0
+  - GDK_PIXBUF_MODULEDIR: /snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders
+  - LOCPATH: /snap/pgadmin4/10/gnome-platform/usr/lib/locale
+  - SNAP_LIBRARY_PATH: /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void
+  - GSM_SKIP_SSH_AGENT_WORKAROUND: true
+  - SNAP_COOKIE: 2WSapeSHph24B_pBwDkOB2yxYzI-lUgom0NRj99lT4obV7IInAYx
+  - QT_IM_MODULE: ibus
+  - LIBGL_DRIVERS_PATH: /snap/pgadmin4/10/gpu-2404/usr/lib/x86_64-linux-gnu/dri/:/snap/pgadmin4/10/gpu-2404/usr/lib/i386-linux-gnu/dri/
+  - SNAP_DATA: /var/snap/pgadmin4/10
+  - GST_PLUGIN_PATH: /snap/pgadmin4/10/usr/lib/x86_64-linux-gnu/gstreamer-1.0
+  - LD_LIBRARY_PATH: /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void:/snap/pgadmin4/10/usr/lib:/snap/pgadmin4/10/usr/lib/x86_64-linux-gnu:/snap/pgadmin4/10/gpu-2404/usr/lib/x86_64-linux-gnu:/snap/pgadmin4/10/gpu-2404/usr/lib/x86_64-linux-gnu/vdpau:/snap/pgadmin4/10/gpu-2404/usr/lib/i386-linux-gnu:/snap/pgadmin4/10/gpu-2404/usr/lib/i386-linux-gnu/vdpau:/snap/pgadmin4/10/gnome-platform/lib/x86_64-linux-gnu:/snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu:/snap/pgadmin4/10/gnome-platform/usr/lib:/snap/pgadmin4/10/gnome-platform/lib:/snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/libunity:/snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/pulseaudio:/snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/libproxy
+  - XDG_RUNTIME_DIR: /run/user/1000/snap.pgadmin4
+  - DEBUGINFOD_URLS: https://debuginfod.ubuntu.com 
+  - LIBVA_DRIVERS_PATH: /snap/pgadmin4/10/gpu-2404/usr/lib/x86_64-linux-gnu/dri/:/snap/pgadmin4/10/gpu-2404/usr/lib/i386-linux-gnu/dri/
+  - GST_PLUGIN_SYSTEM_PATH: /snap/pgadmin4/10/gnome-platform/usr/lib/x86_64-linux-gnu/gstreamer-1.0
+  - FONTCONFIG_FILE: /snap/pgadmin4/10/gnome-platform/etc/fonts/fonts.conf
+  - SNAP_NAME: pgadmin4
+  - JOURNAL_STREAM: 8:15019
+  - XDG_DATA_DIRS: /home/raj-kamble/snap/pgadmin4/10/.local/share:/home/raj-kamble/snap/pgadmin4/10:/snap/pgadmin4/10/data-dir:/snap/pgadmin4/10/usr/share:/snap/pgadmin4/10/gnome-platform/usr/share:/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop:/snap/pgadmin4/10/gpu-2404/usr/share
+  - GDK_BACKEND: x11
+  - PATH: /snap/pgadmin4/10/usr/sbin:/snap/pgadmin4/10/usr/bin:/snap/pgadmin4/10/sbin:/snap/pgadmin4/10/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/pgadmin4/10/gnome-platform/usr/bin
+  - GTK_USE_PORTAL: 1
+  - GDMSESSION: ubuntu
+  - GTK_IM_MODULE_FILE: /home/raj-kamble/snap/pgadmin4/common/.cache/immodules/immodules.cache
+  - DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/1000/bus
+  - GIO_MODULE_DIR: /home/raj-kamble/snap/pgadmin4/common/.cache/gio-modules
+  - PULSE_SERVER: unix:/run/user/1000/snap.pgadmin4/../pulse/native
+  - GIO_LAUNCHED_DESKTOP_FILE_PID: 10604
+  - XKB_CONFIG_ROOT: /snap/pgadmin4/10/gnome-platform/usr/share/X11/xkb
+  - GIO_LAUNCHED_DESKTOP_FILE: /var/lib/snapd/desktop/applications/pgadmin4_pgadmin4.desktop
+  - CHROME_DESKTOP: pgadmin4.desktop
+  - ORIGINAL_XDG_CURRENT_DESKTOP: ubuntu:GNOME
+  - ELECTRON_ENABLE_SECURITY_WARNINGS: false
+  - PGADMIN_INT_PORT: 44141
+  - PGADMIN_INT_KEY: 4b3ed360-885b-4ccb-9725-607462f856e0
+  - PGADMIN_SERVER_MODE: OFF
+--------------------------------------------------------
+
+Total spawn time to start the pgAdmin4 server: 0.009 Sec
+2024-09-25 10:34:39,694: WARNING	werkzeug:	Werkzeug appears to be used in a production deployment. Consider switching to a production web server instead.
+
+ * Serving Flask app 'pgadmin'
+ * Debug mode: off
+
+------------------------------------------
+Total time taken to ping pgAdmin4 server: 8.022 Sec
+------------------------------------------
+Total launch time of pgAdmin4: 8.271 Sec
+------------------------------------------
+Application Server URL: 
+2024-09-25 10:34:41,869: ERROR	pgadmin:	Failed to get/set encryption key using OS password manager because of exception. Error: [org.freedesktop.DBus.Error.AccessDenied] ('An AppArmor policy prevents this sender from sending this message to this recipient; type="method_call", sender=":1.305" (uid=1000 pid=10745 comm="/snap/pgadmin4/10/usr/pgadmin4/venv/bin/python3 -s" label="snap.pgadmin4.pgadmin4 (enforce)") interface="org.freedesktop.DBus.Properties" member="Get" error name="(unset)" requested_reply="0" destination="org.freedesktop.secrets" (uid=1000 pid=1637 comm="/usr/bin/gnome-keyring-daemon --foreground --compo" label="unconfined")',)
+Traceback (most recent call last):
+  File "/snap/pgadmin4/10/usr/pgadmin4/web/pgadmin/browser/__init__.py", line 713, in set_master_password
+    master_key = get_master_password_key_from_os_secret()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/snap/pgadmin4/10/usr/pgadmin4/web/pgadmin/utils/master_password.py", line 48, in get_master_password_key_from_os_secret
+    master_key = keyring.get_password(KEY_RING_SERVICE_NAME,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/snap/pgadmin4/10/usr/pgadmin4/venv/lib/python3.12/site-packages/keyring/core.py", line 63, in get_password
+    return get_keyring().get_password(service_name, username)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/snap/pgadmin4/10/usr/pgadmin4/venv/lib/python3.12/site-packages/keyring/backends/SecretService.py", line 79, in get_password
+    collection = self.get_preferred_collection()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/snap/pgadmin4/10/usr/pgadmin4/venv/lib/python3.12/site-packages/keyring/backends/SecretService.py", line 62, in get_preferred_collection
+    collection = secretstorage.get_default_collection(bus)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/snap/pgadmin4/10/usr/pgadmin4/venv/lib/python3.12/site-packages/secretstorage/collection.py", line 177, in get_default_collection
+    return Collection(connection)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/snap/pgadmin4/10/usr/pgadmin4/venv/lib/python3.12/site-packages/secretstorage/collection.py", line 45, in __init__
+    self._collection.get_property('Label')
+  File "/snap/pgadmin4/10/usr/pgadmin4/venv/lib/python3.12/site-packages/secretstorage/util.py", line 67, in get_property
+    (signature, value), = self.send_and_get_reply(msg)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/snap/pgadmin4/10/usr/pgadmin4/venv/lib/python3.12/site-packages/secretstorage/util.py", line 48, in send_and_get_reply
+    raise DBusErrorResponse(resp_msg)
+jeepney.wrappers.DBusErrorResponse: [org.freedesktop.DBus.Error.AccessDenied] ('An AppArmor policy prevents this sender from sending this message to this recipient; type="method_call", sender=":1.305" (uid=1000 pid=10745 comm="/snap/pgadmin4/10/usr/pgadmin4/venv/bin/python3 -s" label="snap.pgadmin4.pgadmin4 (enforce)") interface="org.freedesktop.DBus.Properties" member="Get" error name="(unset)" requested_reply="0" destination="org.freedesktop.secrets" (uid=1000 pid=1637 comm="/usr/bin/gnome-keyring-daemon --foreground --compo" label="unconfined")',)
+
+2024-09-25 10:34:41,873: WARNING	pgadmin:	Failed to delete master key stored in OS password manager. Error: [org.freedesktop.DBus.Error.AccessDenied] ('An AppArmor policy prevents this sender from sending this message to this recipient; type="method_call", sender=":1.306" (uid=1000 pid=10745 comm="/snap/pgadmin4/10/usr/pgadmin4/venv/bin/python3 -s" label="snap.pgadmin4.pgadmin4 (enforce)") interface="org.freedesktop.DBus.Properties" member="Get" error name="(unset)" requested_reply="0" destination="org.freedesktop.secrets" (uid=1000 pid=1637 comm="/usr/bin/gnome-keyring-daemon --foreground --compo" label="unconfined")',)
+
+
+

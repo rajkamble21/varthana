@@ -1,7 +1,6 @@
-const { where } = require('sequelize');
 const { Op } = require('sequelize');
 
-const { User, Address } = require('../models');
+const { User, Address, Master } = require('../models');
 
 const findUserById = async (id) => {
     try {
@@ -14,7 +13,7 @@ const findUserById = async (id) => {
 
 const findUserByEmail = async (email) => {
     try {
-        let user = await User.findOne({ where: { email } });
+        let user = await User.findOne({ where: { email }, include: [{ model: Address }, { model: Master }] });
         return user;
     } catch (error) {
         console.log(`error during findUserByEmail`, error);
@@ -46,8 +45,9 @@ const getUsers = async () => {
 const getUsersExceptOne = async (id) => {
     try {
         const loggedInUser = await User.findByPk(id, {
-            include: [{ model: Address }]
+            include: [{ model: Address }, { model: Master }]
         });
+
 
         let users = await User.findAll({
             where: {
@@ -55,10 +55,10 @@ const getUsersExceptOne = async (id) => {
                     [Op.ne]: id
                 }
             },
-            include: [{ model: Address }]
+            include: [{ model: Address }, { model: Master }]
         });
 
-        if (loggedInUser.role === "read") {
+        if (loggedInUser.Master.role === "read") {
             const loggedInUserCity = loggedInUser.Address?.address.current_address?.city;
             if (!loggedInUserCity) {
                 return [];

@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import { baseUrl } from "@/app/apiConfig/apiConfig";
 
-const LoginForm = () => {
+const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -16,22 +17,44 @@ const LoginForm = () => {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
-  const validateFields = () => {
-    let errors = {};
+  const validateField = (name, value) => {
+    let error = "";
+
+    switch (name) {
+      case "email": {
+        if (!value) {
+          error = "Email is required!";
+        } else if (!value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+          error = "Invalid email format!";
+        }
+        break;
+      }
+
+      case "password": {
+        if (!value) {
+          error = "Password is required!";
+        }
+        break;
+      }
+
+      default: {
+        break;
+      }
+    }
+
+    return error;
+  };
+
+  const validateAllFields = () => {
     let isValid = true;
-
-    if (!formData.email) {
-      errors.email = "Email is required!";
-      isValid = false;
-    } else if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      errors.email = "Invalid email format";
-      isValid = false;
-    }
-
-    if (!formData.password) {
-      errors.password = "Password is required!";
-      isValid = false;
-    }
+    const errors = {};
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key]);
+      if (error) {
+        errors[key] = error;
+        isValid = false;
+      }
+    });
 
     setFieldErrors(errors);
 
@@ -40,17 +63,14 @@ const LoginForm = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (validateFields()) {
+    if (validateAllFields()) {
       try {
-        const res = await axios.post(
-          `http://localhost:4000/auth/login`,
-          formData
-        );
+        const res = await axios.post(`${baseUrl}/auth/login`, formData);
 
-        console.log(res);
         if (res.status === 200) {
           localStorage.setItem("token", res.data.token);
-          localStorage.setItem("role", res.data.user.role);
+          localStorage.setItem("role", res.data.user.Master.role);
+          enqueueSnackbar("Login successfull!", { variant: "success" });
           router.push("/dashboard");
         }
       } catch (error) {
@@ -66,7 +86,13 @@ const LoginForm = () => {
   const handleChange = (e) => {
     let { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    const error = validateField(name, value);
+    setFieldErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
   };
+
   return (
     <form
       className="flex flex-col max-w-md mx-auto p-8 mt-24 bg-white border border-gray-300 rounded-lg shadow-lg"
@@ -112,4 +138,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default Login;

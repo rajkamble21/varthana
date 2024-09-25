@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       User.hasOne(models.Address, { foreignKey: 'userId', onDelete: 'CASCADE' });
+      User.belongsTo(models.Master, { foreignKey: 'roleId', onDelete: 'SET NULL' });
     }
 
     validatePassword(password) {
@@ -29,10 +30,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    role: {
-      type: DataTypes.ENUM('admin', 'view', 'read'),
-      defaultValue: 'view',
-      allowNull: false
+    roleId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Masters',
+        key: 'id'
+      },
+      defaultValue: 3,
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL'
     }
   }, {
     sequelize,

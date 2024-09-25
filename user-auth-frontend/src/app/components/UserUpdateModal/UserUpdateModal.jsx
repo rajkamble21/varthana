@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import validateField from "./validateField";
 
 const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
   const [formData, setFormData] = useState({
@@ -31,94 +32,92 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
 
   const [isSameAddress, setIsSameAddress] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const validateFields = (formData) => {
-    let errors = {};
+  const validateAllFields = () => {
     let isValid = true;
-
-    if (!formData.name) {
-      errors.name = "Name is required!";
-      isValid = false;
-    }
-
-    if (!formData.phone) {
-      errors.phone = "Phone number is required!";
-      isValid = false;
-    } else if (!formData.phone.match(/^[0-9]{10}$/)) {
-      errors.phone = "Phone number must have 10 digits";
-      isValid = false;
-    }
-
-    if (!formData.current_street) {
-      errors.current_street = "street field is required!";
-      isValid = false;
-    }
-
-    if (!formData.current_city) {
-      errors.current_city = "city field is required!";
-      isValid = false;
-    }
-
-    if (!formData.current_pincode) {
-      errors.current_pincode = "pincode field is required!";
-      isValid = false;
-    } else if (!/^[0-9]{5,6}$/.test(formData.current_pincode)) {
-      errors.current_pincode = "Pincode must be 5 or 6 digits!";
-      isValid = false;
-    }
-
-    if (!formData.current_state) {
-      errors.current_state = "state field is required!";
-      isValid = false;
-    }
-
-    if (!formData.permanent_street) {
-      errors.permanent_street = "street field is required!";
-      isValid = false;
-    }
-
-    if (!formData.permanent_city) {
-      errors.permanent_city = "city field is required!";
-      isValid = false;
-    }
-
-    if (!formData.permanent_pincode) {
-      errors.permanent_pincode = "pincode field is required!";
-      isValid = false;
-    } else if (!/^[0-9]{5,6}$/.test(formData.permanent_pincode)) {
-      errors.permanent_pincode = "Pincode must be 5 or 6 digits!";
-      isValid = false;
-    }
-
-    if (!formData.permanent_state) {
-      errors.permanent_state = "state field is required!";
-      isValid = false;
-    }
+    const errors = {};
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key]);
+      if (error) {
+        errors[key] = error;
+        isValid = false;
+      }
+    });
 
     setFieldErrors(errors);
 
     return isValid;
   };
 
-  const handleUpdateUser = (id, formData) => {
-    const updatedFormData = isSameAddress
-      ? {
-          ...formData,
-          permanent_street: formData.current_street,
-          permanent_city: formData.current_city,
-          permanent_state: formData.current_state,
-          permanent_pincode: formData.current_pincode,
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+
+      if (isSameAddress) {
+        if (name.startsWith("current_")) {
+          const fieldName = name.replace("current_", "permanent_");
+          updatedData[fieldName] = value;
         }
-      : formData;
+      }
 
-    console.log("updatedFormData", updatedFormData);
+      return updatedData;
+    });
 
-    if (validateFields(updatedFormData)) {
-      updateUser(id, updatedFormData);
+    setFieldErrors((prevErrors) => {
+      const error = validateField(name, value);
+      const updatedErrors = { ...prevErrors, [name]: error };
+
+      if (isSameAddress) {
+        if (name.startsWith("current_")) {
+          const permanentFieldName = name.replace("current_", "permanent_");
+          const permanentError = validateField(permanentFieldName, value);
+          updatedErrors[permanentFieldName] = permanentError;
+        }
+      }
+      return updatedErrors;
+    });
+  };
+
+  const handleCheckboxChange = () => {
+    setIsSameAddress((prevValue) => {
+      const newValue = !prevValue;
+
+      if (newValue) {
+        setFormData((prevData) => ({
+          ...prevData,
+          permanent_street: prevData.current_street,
+          permanent_city: prevData.current_city,
+          permanent_state: prevData.current_state,
+          permanent_pincode: prevData.current_pincode,
+        }));
+        const errors = { ...fieldErrors };
+        [
+          "current_street",
+          "current_city",
+          "current_state",
+          "current_pincode",
+        ].forEach((field) => {
+          const error = validateField(field, formData[field]);
+          if (error) {
+            errors[field] = error;
+            const permanentField = field.replace("current_", "permanent_");
+            errors[permanentField] = error;
+          } else {
+            const permanentField = field.replace("current_", "permanent_");
+            errors[permanentField] = "";
+          }
+        });
+        setFieldErrors(errors);
+      }
+
+      return newValue;
+    });
+  };
+
+  const handleUpdateUser = (id, formData) => {
+    if (validateAllFields()) {
+      updateUser(id, formData);
     }
   };
 
@@ -246,7 +245,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                 <input
                   type="checkbox"
                   checked={isSameAddress}
-                  onChange={() => setIsSameAddress(!isSameAddress)}
+                  onChange={handleCheckboxChange}
                 />
                 <span className="ml-2 text-sm font-medium text-gray-700">
                   parmanent address is same as address
@@ -262,11 +261,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
               }`}
               type="text"
               name="permanent_street"
-              value={
-                isSameAddress
-                  ? formData.current_street
-                  : formData.permanent_street
-              }
+              value={formData.permanent_street}
               onChange={handleChange}
               placeholder="Enter street"
               disabled={isSameAddress}
@@ -284,11 +279,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                   }`}
                   type="text"
                   name="permanent_city"
-                  value={
-                    isSameAddress
-                      ? formData.current_city
-                      : formData.permanent_city
-                  }
+                  value={formData.permanent_city}
                   onChange={handleChange}
                   placeholder="Enter city"
                   disabled={isSameAddress}
@@ -306,11 +297,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                   }`}
                   type="text"
                   name="permanent_pincode"
-                  value={
-                    isSameAddress
-                      ? formData.current_pincode
-                      : formData.permanent_pincode
-                  }
+                  value={formData.permanent_pincode}
                   onChange={handleChange}
                   placeholder="Enter pincode"
                   disabled={isSameAddress}
@@ -328,11 +315,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
                   }`}
                   type="text"
                   name="permanent_state"
-                  value={
-                    isSameAddress
-                      ? formData.current_state
-                      : formData.permanent_state
-                  }
+                  value={formData.permanent_state}
                   onChange={handleChange}
                   placeholder="Enter state"
                   disabled={isSameAddress}

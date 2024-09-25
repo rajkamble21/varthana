@@ -1,65 +1,99 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import { baseUrl } from "@/app/apiConfig/apiConfig";
 
-const RegisterForm = () => {
+const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    confirm_password: "",
     phone: "",
   });
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
     email: "",
     password: "",
+    confirm_password: "",
     phone: "",
   });
 
+  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
-  const validateFields = () => {
-    let errors = {};
+  const validateField = (name, value) => {
+    let error = "";
+
+    switch (name) {
+      case "name": {
+        if (!value) {
+          error = "Name is required!";
+        }
+        break;
+      }
+      case "email": {
+        if (!value) {
+          error = "Email is required!";
+        } else if (!value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+          error = "Invalid email format!";
+        }
+        break;
+      }
+
+      case "password": {
+        if (!value) {
+          error = "Password is required!";
+        } else if (value.length < 6) {
+          error = "Password must be at least 6 characters long";
+        } else if (!value.match(/\d/)) {
+          error = "Password must contain at least one number";
+        } else if (!value.match(/[a-zA-Z]/)) {
+          error = "Password must contain at least one alphabet";
+        } else if (!value.match(/[!@#$%^&*()_+{}\[\]:;<>,.?]/)) {
+          error = "Password must contain at least one special character";
+        }
+        break;
+      }
+
+      case "confirm_password": {
+        if (!value) {
+          error = "Confirm password is required!";
+        } else if (value != formData.password) {
+          error = "password & confirm password is not same!";
+        }
+        break;
+      }
+
+      case "phone": {
+        if (!value) {
+          error = "Phone number is required!";
+        } else if (!value.match(/^[0-9]{10}$/)) {
+          error = "Phone number must have 10 digits";
+        }
+        break;
+      }
+
+      default: {
+        break;
+      }
+    }
+
+    return error;
+  };
+
+  const validateAllFields = () => {
     let isValid = true;
-
-    if (!formData.name) {
-      errors.name = "Name is required!";
-      isValid = false;
-    }
-
-    if (!formData.email) {
-      errors.email = "Email is required!";
-      isValid = false;
-    } else if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      errors.email = "Invalid email format";
-      isValid = false;
-    }
-
-    if (!formData.password) {
-      errors.password = "Password is required!";
-      isValid = false;
-    } else if (formData.password.length < 6) {
-      errors.password = "Password must be at least 6 characters long";
-      isValid = false;
-    } else if (!formData.password.match(/\d/)) {
-      errors.password = "Password must contain at least one number";
-      isValid = false;
-    } else if (!formData.password.match(/[a-zA-Z]/)) {
-      errors.password = "Password must contain at least one alphabet";
-      isValid = false;
-    } else if (!formData.password.match(/[!@#$%^&*()_+{}\[\]:;<>,.?]/)) {
-      errors.password = "Password must contain at least one special character";
-      isValid = false;
-    }
-
-    if (!formData.phone) {
-      errors.phone = "Phone number is required!";
-      isValid = false;
-    } else if (!formData.phone.match(/^[0-9]{10}$/)) {
-      errors.phone = "Phone number must have 10 digits";
-      isValid = false;
-    }
+    const errors = {};
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key]);
+      if (error) {
+        errors[key] = error;
+        isValid = false;
+      }
+    });
 
     setFieldErrors(errors);
 
@@ -69,18 +103,27 @@ const RegisterForm = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (validateFields()) {
+    const { confirm_password, ...uploadFormData } = formData;
+
+    if (validateAllFields()) {
       try {
         const res = await axios.post(
-          `http://localhost:4000/auth/register`,
-          formData
+          `${baseUrl}/auth/register`,
+          uploadFormData
         );
 
         if (res.status === 201) {
-          setFormData({ name: "", email: "", password: "", phone: "" });
+          setFormData({
+            name: "",
+            email: "",
+            password: "",
+            phone: "",
+            confirm_password: "",
+          });
           enqueueSnackbar("Registration successful! Please Login", {
             variant: "success",
           });
+          router.push("/login");
         }
       } catch (error) {
         console.log("error in handleRegister", error);
@@ -95,6 +138,12 @@ const RegisterForm = () => {
   const handleChange = (e) => {
     let { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    const error = validateField(name, value);
+    setFieldErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
   };
 
   return (
@@ -152,6 +201,20 @@ const RegisterForm = () => {
       <div className="mb-4">
         <input
           className="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          type="password"
+          name="confirm_password"
+          placeholder="Enter password again"
+          value={formData.confirm_password}
+          onChange={handleChange}
+        />
+        {fieldErrors.confirm_password && (
+          <p className="text-red-500 text-sm">{fieldErrors.confirm_password}</p>
+        )}
+      </div>
+
+      <div className="mb-4">
+        <input
+          className="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
           type="text"
           name="phone"
           placeholder="Enter your phone number"
@@ -173,4 +236,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default Register;
