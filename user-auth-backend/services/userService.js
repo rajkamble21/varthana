@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, where } = require('sequelize');
 
 const { User, Address, Master } = require('../models');
 
@@ -155,6 +155,67 @@ const deleteUser = async (id) => {
     }
 }
 
+const addMutipleUsers = async ({ users }) => {
+    try {
+
+
+        let createdUsers = [];
+        let alreadyExistingUsers = [];
+
+        const userPromises = users.map(async (user) => {
+            let userExists = await findUserByEmail(user.email);
+            if (userExists) {
+                alreadyExistingUsers.push(userExists);
+            } else {
+                const { current_street,
+                    current_city,
+                    current_state,
+                    current_pincode,
+                    permanent_street,
+                    permanent_city,
+                    permanent_state,
+                    permanent_pincode,
+                    name, email, phone } = user;
+
+                const current_address = {
+                    street: current_street,
+                    city: current_city,
+                    state: current_state,
+                    pincode: current_pincode,
+                };
+
+                const permanent_address = {
+                    street: permanent_street,
+                    city: permanent_city,
+                    state: permanent_state,
+                    pincode: permanent_pincode,
+                };
+                let createdUser = await createUser({ name, email, password: "pass@#123", phone });
+                await Address.create({
+                    address: {
+                        current_address,
+                        permanent_address
+                    },
+                    userId: createdUser.id
+                });
+
+                const createdUserDetails = await User.findByPk(createdUser.id, {
+                    include: [{ model: Address }]
+                });
+
+                createdUsers.push(createdUserDetails);
+            }
+        });
+
+
+        await Promise.all(userPromises);
+
+        return { createdUsers, alreadyExistingUsers };
+    } catch (error) {
+        console.log("error in addMutipleUsers", error);
+    }
+}
+
 
 module.exports = {
     updateUser,
@@ -163,5 +224,6 @@ module.exports = {
     getUsersExceptOne,
     getUsers,
     findUserByEmail,
-    createUser
+    createUser,
+    addMutipleUsers,
 }

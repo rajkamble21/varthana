@@ -4,15 +4,23 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import UserUpdateModal from "../../components/UserUpdateModal/UserUpdateModal";
+import UserDeleteModal from "../../components/UserDeleteModal/UserDeleteModal";
 import { useSnackbar } from "notistack";
 import { baseUrl } from "../../apiConfig/apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faPenToSquare,
+  faUpload,
+  faDownload,
+} from "@fortawesome/free-solid-svg-icons";
+import * as XLSX from "xlsx";
 
 const dashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [role, setRole] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,6 +59,10 @@ const dashboard = () => {
         let errorMessage = error.response?.data.message
           ? error.response.data.message
           : error.message;
+        if (errorMessage === "Invalid token") {
+          localStorage.clear();
+          router.push("/login");
+        }
         enqueueSnackbar(errorMessage, { variant: "error" });
         setLoading(false);
       }
@@ -96,6 +108,7 @@ const dashboard = () => {
           `User named ${res.data.user.name} deleted successfully`,
           { variant: "success" }
         );
+        setOpenDeleteModal(false);
       }
     } catch (error) {
       console.log("error in deleteUser", error);
@@ -104,6 +117,63 @@ const dashboard = () => {
         ? error.response.data.message
         : error.message;
       enqueueSnackbar(errorMessage, { variant: "error" });
+    }
+  };
+
+  const addUsersInBulk = async (data) => {
+    try {
+      const res = await axios.post(`${baseUrl}/users/bulk-add`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.status === 200) {
+        console.log(res.data.createdUsers);
+        setUsers([...users, ...res.data.createdUsers]);
+        enqueueSnackbar(res.data.message, { variant: "success" });
+      }
+    } catch (error) {
+      console.log("error in addUsersInBulk", error);
+      let errorMessage = error.response?.data.message
+        ? error.response.data.message
+        : error.message;
+      enqueueSnackbar(errorMessage, { variant: "error" });
+    }
+  };
+
+  const downloadExcel = () => {
+    const requiredColumns = users.map((user) => ({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      current_street: user.Address.address.current_address?.street,
+      current_city: user.Address.address.current_address?.city,
+      current_state: user.Address.address.current_address?.state,
+      current_pincode: user.Address.address.current_address?.pincode,
+      permanent_street: user.Address.address.permanent_address?.street,
+      permanent_city: user.Address.address.permanent_address?.city,
+      permanent_state: user.Address.address.permanent_address?.state,
+      permanent_pincode: user.Address.address.permanent_address?.pincode,
+    }));
+    console.log(requiredColumns);
+    const worksheet = XLSX.utils.json_to_sheet(requiredColumns);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+    XLSX.writeFile(workbook, "users.xlsx");
+  };
+
+  const uploadExcel = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = ({ target: { result } }) => {
+        const workbook = XLSX.read(new Uint8Array(result), { type: "array" });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        let data = { users: XLSX.utils.sheet_to_json(worksheet) };
+        console.log("uploadExcel", data);
+        addUsersInBulk(data);
+      };
+      reader.readAsArrayBuffer(file);
     }
   };
 
@@ -117,7 +187,6 @@ const dashboard = () => {
         <div className="rounded-lg w-full my-16 p-6 flex flex-col items-center gap-4 shadow-lg bg-gray-100">
           <div className="w-full flex justify-between items-center">
             <h1 className="text-2xl font-bold text-green-600">User List</h1>
-
             <input
               type="text"
               placeholder="Search by name..."
@@ -125,6 +194,25 @@ const dashboard = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            {role == "admin" && (
+              <div className="flex gap-2">
+                <button
+                  onClick={downloadExcel}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
+                >
+                  <FontAwesomeIcon icon={faDownload} />
+                </button>
+                <label className="bg-blue-500 text-white px-4 py-3 rounded-lg shadow hover:bg-blue-600 cursor-pointer inline-flex items-center">
+                  <FontAwesomeIcon icon={faUpload} />
+                  <input
+                    type="file"
+                    accept=".xlsx, .xls"
+                    onChange={uploadExcel}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            )}
           </div>
 
           <div className="w-full">
@@ -132,6 +220,7 @@ const dashboard = () => {
               <table className="w-full bg-white shadow-lg rounded-lg">
                 <thead>
                   <tr className="bg-green-500 text-white">
+                    <th className="p-2 text-center">Sr. No.</th>
                     <th className="p-2 text-center">Name </th>
                     <th className="p-2 text-center">Email</th>
                     <th className="p-2 text-center">Phone</th>
@@ -142,11 +231,12 @@ const dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.map((user) => (
+                  {filteredUsers.map((user, index) => (
                     <tr
                       key={user.id}
                       className="hover:bg-gray-100 transition duration-300"
                     >
+                      <td className="p-2 text-center">{index + 1}</td>
                       <td className="p-2 text-center">{user.name}</td>
                       <td className="p-2 text-center">{user.email}</td>
                       <td className="p-2 text-center">{user.phone}</td>
@@ -157,23 +247,24 @@ const dashboard = () => {
                       </td>
 
                       {role == "admin" && (
-                        <td className="flex gap-2 p-2 justify-center">
+                        <td className="flex gap-4 p-2 justify-center">
                           <button
                             onClick={() => {
                               setOpenModal(true);
                               setCurrentUser(user);
                             }}
-                            className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600"
+                            className=" text-green-500 hover:text-green-600 text-xl"
                           >
                             <FontAwesomeIcon icon={faPenToSquare} />{" "}
-                            <span>Edit</span>
                           </button>
                           <button
-                            onClick={() => deleteUser(user.id)}
-                            className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600"
+                            onClick={() => {
+                              setOpenDeleteModal(true);
+                              setCurrentUser(user);
+                            }}
+                            className=" text-red-500 hover:text-red-600 text-xl"
                           >
                             <FontAwesomeIcon icon={faTrash} />{" "}
-                            <span>Delete</span>
                           </button>
                         </td>
                       )}
@@ -198,6 +289,13 @@ const dashboard = () => {
           user={currentUser}
           setOpenModal={setOpenModal}
           updateUser={updateUser}
+        />
+      )}
+      {openDeleteModal && (
+        <UserDeleteModal
+          user={currentUser}
+          setOpenDeleteModal={setOpenDeleteModal}
+          deleteUser={deleteUser}
         />
       )}
     </>

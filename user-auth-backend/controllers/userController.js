@@ -3,7 +3,8 @@ const {
     deleteUser,
     findUserById,
     getUsersExceptOne,
-    getUsers
+    getUsers,
+    addMutipleUsers
 } = require('../services/userService');
 
 const getAllUsers = async (req, res) => {
@@ -55,9 +56,22 @@ const updateUserById = async (req, res) => {
     }
 }
 
+const addUsersInBulk = async (req, res) => {
+    try {
+        let { createdUsers, alreadyExistingUsers } = await addMutipleUsers(req.body);
+        if (createdUsers.length === 0) {
+            return res.status(200).json({ message: "All users already exists", createdUsers, alreadyExistingUsers });
+        }
+        return res.status(200).json({ message: "Bulk users added successfully", createdUsers, alreadyExistingUsers });
+    } catch (error) {
+        return res.status(500).json({ message: error.message, error });
+    }
+}
+
 module.exports = {
     deleteUserById,
     updateUserById,
     getUsersExceptLoggedInUser,
-    getAllUsers
+    getAllUsers,
+    addUsersInBulk
 }

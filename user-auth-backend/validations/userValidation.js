@@ -19,8 +19,13 @@ const userIdSchema = joi.object({
     id: joi.number().integer().required(),
 })
 
+const addUsersInBulkSchema = joi.object({
+    users: joi.array().items(updateUserSchema).min(1).required(),
+})
+
 
 module.exports = {
     updateUserSchema,
-    userIdSchema
+    userIdSchema,
+    addUsersInBulkSchema
 }
