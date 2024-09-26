@@ -5,6 +5,12 @@ const phone = (value, helpers) => {
     }
 }
 
+const pincode = (value, helpers) => {
+    if (!value.match(/^[0-9]{6}$/)) {
+        return helpers.message('pincode must have 6 digits');
+    }
+}
+
 const password = (value, helpers) => {
     if (value.length < 6) {
         return helpers.message('password must be 6 characters long');
@@ -22,5 +28,6 @@ const password = (value, helpers) => {
 
 module.exports = {
     password,
-    phone
+    phone,
+    pincode
 }

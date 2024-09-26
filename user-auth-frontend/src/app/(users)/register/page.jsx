@@ -27,6 +27,8 @@ const Register = () => {
   const validateField = (name, value) => {
     let error = "";
 
+    value = value.trim();
+
     switch (name) {
       case "name": {
         if (!value) {
@@ -100,10 +102,23 @@ const Register = () => {
     return isValid;
   };
 
+  const trimFormData = (data) => {
+    const trimmedData = {};
+    for (const key in data) {
+      if (typeof data[key] === "string") {
+        trimmedData[key] = data[key].trim();
+      } else {
+        trimmedData[key] = data[key];
+      }
+    }
+    return trimmedData;
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    const { confirm_password, ...uploadFormData } = formData;
+    const { confirm_password, ...restFormData } = formData;
+    const uploadFormData = trimFormData(restFormData);
 
     if (validateAllFields()) {
       try {

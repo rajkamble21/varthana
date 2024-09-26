@@ -1,5 +1,5 @@
 const joi = require('joi');
-const { phone } = require('./customValidation');
+const { phone, pincode } = require('./customValidation');
 
 const updateUserSchema = joi.object({
     name: joi.string().required(),
@@ -8,11 +8,11 @@ const updateUserSchema = joi.object({
     current_street: joi.string().optional(),
     current_city: joi.string().optional(),
     current_state: joi.string().optional(),
-    current_pincode: joi.string().optional(),
+    current_pincode: joi.string().custom(pincode).optional(),
     permanent_street: joi.string().optional(),
     permanent_city: joi.string().optional(),
     permanent_state: joi.string().optional(),
-    permanent_pincode: joi.string().optional()
+    permanent_pincode: joi.string().custom(pincode).optional()
 })
 
 const userIdSchema = joi.object({

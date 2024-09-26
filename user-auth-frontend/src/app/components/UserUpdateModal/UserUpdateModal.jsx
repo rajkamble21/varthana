@@ -115,9 +115,22 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     });
   };
 
+  const trimFormData = (data) => {
+    const trimmedData = {};
+    for (const key in data) {
+      if (typeof data[key] === "string") {
+        trimmedData[key] = data[key].trim();
+      } else {
+        trimmedData[key] = data[key];
+      }
+    }
+    return trimmedData;
+  };
+
   const handleUpdateUser = (id, formData) => {
     if (validateAllFields()) {
-      updateUser(id, formData);
+      const uploadFormData = trimFormData(formData);
+      updateUser(id, uploadFormData);
     }
   };
 

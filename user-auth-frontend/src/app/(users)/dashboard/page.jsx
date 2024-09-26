@@ -164,17 +164,15 @@ const dashboard = () => {
 
   const uploadExcel = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = ({ target: { result } }) => {
-        const workbook = XLSX.read(new Uint8Array(result), { type: "array" });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        let data = { users: XLSX.utils.sheet_to_json(worksheet) };
-        console.log("uploadExcel", data);
-        addUsersInBulk(data);
-      };
-      reader.readAsArrayBuffer(file);
-    }
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = ({ target: { result } }) => {
+      const workbook = XLSX.read(new Uint8Array(result), { type: "array" });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      let data = { users: XLSX.utils.sheet_to_json(worksheet) };
+      console.log("uploadExcel", data);
+      addUsersInBulk(data);
+    };
   };
 
   const filteredUsers = users.filter((user) =>

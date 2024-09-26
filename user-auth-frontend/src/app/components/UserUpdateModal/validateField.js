@@ -2,6 +2,8 @@
 const validateField = (name, value) => {
     let error = "";
 
+    value = value.trim();
+
     switch (name) {
         case "name": {
             if (!value) {
@@ -51,8 +53,8 @@ const validateField = (name, value) => {
         case "current_pincode": {
             if (!value) {
                 error = "pincode field is required!";
-            } else if (!/^[0-9]{5,6}$/.test(value)) {
-                error = "Pincode must be 5 or 6 digits!";
+            } else if (!/^[0-9]{6}$/.test(value)) {
+                error = "Pincode must be 6 digits long!";
             }
             break;
         }
@@ -80,8 +82,8 @@ const validateField = (name, value) => {
         case "permanent_pincode": {
             if (!value) {
                 error = "pincode field is required!";
-            } else if (!/^[0-9]{5,6}$/.test(value)) {
-                error = "Pincode must be 5 or 6 digits!";
+            } else if (!/^[0-9]{6}$/.test(value)) {
+                error = "Pincode must be 6 digits long!";
             }
             break;
         }

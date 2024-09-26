@@ -20,6 +20,8 @@ const Login = () => {
   const validateField = (name, value) => {
     let error = "";
 
+    value = value.trim();
+
     switch (name) {
       case "email": {
         if (!value) {
@@ -60,6 +62,7 @@ const Login = () => {
 
     return isValid;
   };
+  
 
   const handleLogin = async (e) => {
     e.preventDefault();
