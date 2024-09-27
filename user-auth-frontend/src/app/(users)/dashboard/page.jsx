@@ -169,7 +169,14 @@ const dashboard = () => {
     reader.onload = ({ target: { result } }) => {
       const workbook = XLSX.read(new Uint8Array(result), { type: "array" });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      let data = { users: XLSX.utils.sheet_to_json(worksheet) };
+      let users = XLSX.utils.sheet_to_json(worksheet);
+      users = users.map((user) => ({
+        ...user,
+        phone: String(user.phone),
+        current_pincode: String(user.current_pincode),
+        permanent_pincode: String(user.permanent_pincode),
+      }));
+      let data = { users };
       console.log("uploadExcel", data);
       addUsersInBulk(data);
     };

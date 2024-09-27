@@ -52,3 +52,5 @@ npx sequelize model:generate --name Address --attributes address:jsonb
 
 
 
+sudo lsof -i :4000
+sudo kill -9 22661
