@@ -182,13 +182,13 @@ const dashboard = () => {
   return (
     <>
       <div className="container mx-auto p-6">
-        <div className="rounded-lg w-full my-16 p-6 flex flex-col items-center gap-4 shadow-lg bg-gray-100">
+        <div className="rounded-lg w-full my-16 p-6 flex flex-col items-center gap-4 shadow-lg bg-white bg-opacity-90 backdrop-filter backdrop-blur-lg">
           <div className="w-full flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-green-600">User List</h1>
+            <h1 className="text-3xl font-bold text-green-600">User List</h1>
             <input
               type="text"
               placeholder="Search by name..."
-              className="max-w-xs p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300 mb-4"
+              className="w-full lg:w-1/3 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300 mb-4"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -223,6 +223,7 @@ const dashboard = () => {
                     <th className="p-2 text-center">Email</th>
                     <th className="p-2 text-center">Phone</th>
                     <th className="p-2 text-center">City</th>
+                    <th className="p-2 text-center">State</th>
                     {role == "admin" && (
                       <th className="p-2 text-center">Edit/Delete</th>
                     )}
@@ -241,6 +242,11 @@ const dashboard = () => {
                       <td className="p-2 text-center">
                         {user.Address?.address.current_address?.city
                           ? user.Address?.address.current_address?.city
+                          : "NA"}
+                      </td>
+                      <td className="p-2 text-center">
+                        {user.Address?.address.current_address?.state
+                          ? user.Address?.address.current_address?.state
                           : "NA"}
                       </td>
 
