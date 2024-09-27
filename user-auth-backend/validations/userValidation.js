@@ -5,6 +5,7 @@ const updateUserSchema = joi.object({
     name: joi.string().required(),
     email: joi.string().email().required(),
     phone: joi.string().custom(phone).required(),
+    roleId: joi.number().integer().optional(),
     current_street: joi.string().optional(),
     current_city: joi.string().optional(),
     current_state: joi.string().optional(),

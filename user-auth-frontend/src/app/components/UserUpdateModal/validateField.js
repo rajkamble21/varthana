@@ -2,7 +2,9 @@
 const validateField = (name, value) => {
     let error = "";
 
-    value = value.trim();
+    if (typeof value == 'string') {
+        value = value.trim();
+    }
 
     switch (name) {
         case "name": {

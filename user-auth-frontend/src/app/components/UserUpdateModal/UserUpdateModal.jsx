@@ -7,6 +7,7 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
     name: user.name || "",
     email: user.email || "",
     phone: user.phone || "",
+    roleId: user.roleId || "",
     current_street: user.Address?.address.current_address?.street || "",
     current_city: user.Address?.address.current_address?.city || "",
     current_state: user.Address?.address.current_address?.state || "",
@@ -189,6 +190,25 @@ const UserUpdateModal = ({ user, setOpenModal, updateUser }) => {
               {fieldErrors.phone && (
                 <p className="text-red-500 text-sm">{fieldErrors.phone}</p>
               )}
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor=""
+                className="block text-sm font-medium text-gray-700"
+              >
+                Role
+              </label>
+              <select
+                className="mt-1 block w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm p-2"
+                name="roleId"
+                type="text"
+                value={formData.roleId}
+                onChange={handleChange}
+              >
+                <option value="1">Admin</option>
+                <option value="2">Read</option>
+                <option value="3">View</option>
+              </select>
             </div>
             <label className="block text-sm font-medium text-gray-700">
               Current address

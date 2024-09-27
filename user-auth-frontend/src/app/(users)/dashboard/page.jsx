@@ -22,32 +22,33 @@ const dashboard = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [role, setRole] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { enqueueSnackbar } = useSnackbar();
-
   const router = useRouter();
-  let [token, setToken] = useState(null);
+
+  let [loggedInUser, setLoggedInUser] = useState(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      let storedToken = localStorage.getItem("token");
-      if (!storedToken) {
+      let loggedInCredentials = JSON.parse(
+        localStorage.getItem("loggedInUser")
+      );
+      console.log(loggedInCredentials);
+      if (!loggedInCredentials?.token) {
         router.push("/login");
       }
-      setToken(storedToken);
-      setRole(localStorage.getItem("role"));
+      setLoggedInUser(loggedInCredentials);
     }
   }, []);
 
   useEffect(() => {
-    if (!token) return;
+    if (!loggedInUser?.token) return;
 
     const fetchUsers = async () => {
       try {
         const res = await axios.get(`${baseUrl}/users`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${loggedInUser?.token}`,
           },
         });
 
@@ -69,13 +70,13 @@ const dashboard = () => {
     };
 
     fetchUsers();
-  }, [token]);
+  }, [loggedInUser?.token]);
 
   const updateUser = async (id, formData) => {
     try {
       const res = await axios.put(`${baseUrl}/users/${id}`, formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${loggedInUser?.token}`,
         },
       });
       if (res.status === 200) {
@@ -99,7 +100,7 @@ const dashboard = () => {
     try {
       const res = await axios.delete(`${baseUrl}/users/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${loggedInUser?.token}`,
         },
       });
       if (res.status === 200) {
@@ -124,7 +125,7 @@ const dashboard = () => {
     try {
       const res = await axios.post(`${baseUrl}/users/bulk-add`, data, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${loggedInUser?.token}`,
         },
       });
       if (res.status === 200) {
@@ -199,7 +200,7 @@ const dashboard = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            {role == "admin" && (
+            {loggedInUser?.role == "admin" && (
               <div className="flex gap-2">
                 <button
                   onClick={downloadExcel}
@@ -231,7 +232,7 @@ const dashboard = () => {
                     <th className="p-2 text-center">Phone</th>
                     <th className="p-2 text-center">City</th>
                     <th className="p-2 text-center">State</th>
-                    {role == "admin" && (
+                    {loggedInUser?.role == "admin" && (
                       <th className="p-2 text-center">Edit/Delete</th>
                     )}
                   </tr>
@@ -257,7 +258,7 @@ const dashboard = () => {
                           : "NA"}
                       </td>
 
-                      {role == "admin" && (
+                      {loggedInUser?.role == "admin" && (
                         <td className="flex gap-4 p-2 justify-center">
                           <button
                             onClick={() => {

@@ -41,8 +41,14 @@ const Login = () => {
         const res = await axios.post(`${baseUrl}/auth/login`, formData);
 
         if (res.status === 200) {
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("role", res.data.user.Master.role);
+          localStorage.setItem(
+            "loggedInUser",
+            JSON.stringify({
+              token: res.data.token,
+              id: res.data.user.id,
+              role: res.data.user.Master.role,
+            })
+          );
           enqueueSnackbar("Login successfull!", { variant: "success" });
           router.push("/dashboard");
         }
